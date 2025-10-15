@@ -54,7 +54,7 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
               <select
                 value={formData.period || '15m'}
                 onChange={(e) => setFormData({ ...formData, period: e.target.value })}
-                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500"
+                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500 appearance-none"
               >
                 <option value="1m">1分钟</option>
                 <option value="5m">5分钟</option>
@@ -111,7 +111,7 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
               <select
                 value={formData.period || '5m'}
                 onChange={(e) => setFormData({ ...formData, period: e.target.value })}
-                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500"
+                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500 appearance-none"
               >
                 <option value="5m">5分钟</option>
                 <option value="15m">15分钟</option>
