@@ -51,7 +51,7 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
 
   const bind = useGesture({
     onDrag: ({ direction: [xDir], velocity }) => {
-      if (xDir > 0 && velocity > 0.3) {
+      if (xDir > 0 && velocity > 10) {
         onBack();
       }
     },
