@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useGesture } from 'react-use-gesture';
 import { Plus, TrendingUp, BarChart3, DollarSign, Edit2, Trash2, ArrowLeft } from 'lucide-react';
 import { Strategy, StrategyType } from '../types/strategy';
 import StrategyForm from './StrategyForm';
@@ -48,6 +49,14 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
   const [showForm, setShowForm] = useState(false);
   const [editingStrategy, setEditingStrategy] = useState<Strategy | null>(null);
 
+  const bind = useGesture({
+    onDrag: ({ direction: [xDir], velocity }) => {
+      if (xDir > 0 && velocity > 0.3) {
+        onBack();
+      }
+    },
+  });
+
   const handleDelete = (id: string) => {
     setStrategies(strategies.filter(s => s.id !== id));
   };
@@ -81,7 +90,7 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
   }
 
   return (
-    <div className="h-full w-full flex flex-col p-6 overflow-hidden">
+    <div {...bind()} className="h-full w-full flex flex-col p-6 overflow-hidden mt-10">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

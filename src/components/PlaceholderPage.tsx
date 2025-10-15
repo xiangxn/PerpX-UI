@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useGesture } from 'react-use-gesture';
 import { LucideIcon, ArrowLeft } from 'lucide-react';
 
 interface PlaceholderPageProps {
@@ -8,8 +9,16 @@ interface PlaceholderPageProps {
 }
 
 export default function PlaceholderPage({ title, icon: Icon, onBack }: PlaceholderPageProps) {
+  const bind = useGesture({
+    onDrag: ({ direction: [xDir], velocity }) => {
+      if (xDir > 0 && velocity > 0.3) {
+        onBack();
+      }
+    },
+  });
+
   return (
-    <div className="h-full w-full flex flex-col p-6">
+    <div {...bind()} className="h-full w-full flex flex-col p-6 mt-10">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -168,7 +168,7 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
   };
 
   return (
-    <div className="h-full w-full flex flex-col p-6 overflow-hidden">
+    <div className="h-full w-full flex flex-col p-6 overflow-hidden mt-10">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

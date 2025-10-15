@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useGesture } from 'react-use-gesture';
 import { Wallet, Check, Zap, ArrowLeft } from 'lucide-react';
 
 interface SubscriptionPaymentProps {
@@ -31,8 +32,16 @@ export default function SubscriptionPayment({ onBack }: SubscriptionPaymentProps
     alert('支付成功！感谢您的订阅。');
   };
 
+  const bind = useGesture({
+    onDrag: ({ direction: [xDir], velocity }) => {
+      if (xDir > 0 && velocity > 0.3) {
+        onBack();
+      }
+    },
+  });
+
   return (
-    <div className="h-full w-full flex flex-col p-6 overflow-hidden">
+    <div {...bind()} className="h-full w-full flex flex-col p-6 overflow-hidden mt-10">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useGesture } from 'react-use-gesture';
 import { Mail, User, Receipt, Edit2, Check, X, ArrowLeft } from 'lucide-react';
 import { PaymentRecord, UserProfile } from '../types/strategy';
 
@@ -53,8 +54,16 @@ export default function PersonalInfo({ onBack }: PersonalInfoProps) {
     setIsEditingEmail(false);
   };
 
+  const bind = useGesture({
+    onDrag: ({ direction: [xDir], velocity }) => {
+      if (xDir > 0 && velocity > 0.3) {
+        onBack();
+      }
+    },
+  });
+
   return (
-    <div className="h-full w-full flex flex-col p-6 overflow-hidden">
+    <div {...bind()} className="h-full w-full flex flex-col p-6 overflow-hidden mt-10">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
