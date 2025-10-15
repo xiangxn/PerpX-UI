@@ -90,7 +90,7 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
   }
 
   return (
-    <div {...bind()} className="h-full w-full flex flex-col p-6 overflow-hidden mt-2" style={{ x }} >
+    <div {...bind()} className="h-full w-full flex flex-col p-6 overflow-hidden mt-2" >
       <div className="flex items-center justify-between mb-6" >
         <div className="flex items-center justify-center w-full gap-3">
           {/* <motion.button
