@@ -18,7 +18,7 @@ export default function PlaceholderPage({ title, icon: Icon, onBack }: Placehold
   });
 
   return (
-    <div {...bind()} className="h-full w-full flex flex-col p-6 mt-10">
+    <div {...bind()} className="h-full w-full flex flex-col p-6 mt-2">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
