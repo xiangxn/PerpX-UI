@@ -12,7 +12,7 @@ const menuItems: { id: MenuItem; title: string; subtitle: string; icon: any; gra
   {
     id: 'strategy',
     title: '策略管理',
-    subtitle: '添加和管理交易策略',
+    subtitle: '添加和管理订阅策略',
     icon: TrendingUp,
     gradient: 'from-blue-500 to-cyan-500'
   },
