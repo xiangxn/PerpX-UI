@@ -11,27 +11,28 @@ const mockProfile: UserProfile = {
   telegramId: '@crypto_trader_123',
   email: 'user@example.com',
   avatar: '👤',
+  subscriptionDays: 30,
 };
 
 const mockPayments: PaymentRecord[] = [
   {
     id: '1',
     date: '2024-10-15',
-    amount: 0.025,
+    amount: 25,
     duration: '季度订阅',
     txHash: '0x1234...5678',
   },
   {
     id: '2',
     date: '2024-07-15',
-    amount: 0.025,
+    amount: 25,
     duration: '季度订阅',
     txHash: '0x8765...4321',
   },
   {
     id: '3',
     date: '2024-04-15',
-    amount: 0.01,
+    amount: 10,
     duration: '月度订阅',
     txHash: '0xabcd...efgh',
   },
@@ -81,6 +82,10 @@ export default function PersonalInfo({ onBack }: PersonalInfoProps) {
             <div>
               <h2 className="text-2xl font-bold text-white">欢迎回来!</h2>
               <p className="text-white/60">管理您的账户信息</p>
+            </div>
+            <div className="ml-auto bg-white/5 rounded-xl p-3">
+              <p className="text-white/50 text-sm">订阅剩余</p>
+              <p className="text-cyan-400 font-bold">{profile.subscriptionDays} 天</p>
             </div>
           </div>
 
@@ -165,7 +170,7 @@ export default function PersonalInfo({ onBack }: PersonalInfoProps) {
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-white font-medium">{payment.duration}</span>
-                  <span className="text-green-400 font-bold">{payment.amount} ETH</span>
+                  <span className="text-green-400 font-bold">{payment.amount} USDT</span>
                 </div>
                 <div className="space-y-1 text-sm">
                   <div className="flex items-center justify-between text-white/50">

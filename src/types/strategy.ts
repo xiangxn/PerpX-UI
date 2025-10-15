@@ -35,6 +35,7 @@ export interface UserProfile {
   telegramId: string;
   email: string;
   avatar?: string;
+  subscriptionDays: number;
 }
 
 export interface PaymentRecord {

@@ -7,15 +7,14 @@ interface SubscriptionPaymentProps {
 }
 
 const plans = [
-  { id: 'monthly', name: '月度订阅', price: '0.01', duration: '30天', badge: null },
-  { id: 'quarterly', name: '季度订阅', price: '0.025', duration: '90天', badge: '省17%', popular: true },
-  { id: 'yearly', name: '年度订阅', price: '0.08', duration: '365天', badge: '省33%' },
+  { id: 'monthly', name: '月度订阅', price: '10', duration: '30天', badge: null },
+  { id: 'quarterly', name: '季度订阅', price: '25', duration: '90天', badge: '省16%', popular: true },
+  { id: 'yearly', name: '年度订阅', price: '85', duration: '365天', badge: '省29%' },
 ];
 
 const wallets = [
-  { id: 'metamask', name: 'MetaMask', logo: '🦊' },
-  { id: 'okx', name: 'OKX Wallet', logo: '⭕' },
-  { id: 'binance', name: 'Binance Wallet', logo: '🟡' },
+  { id: 'binance', name: 'Binance Wallet', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e8/Binance_Logo.svg' },
+  { id: 'metamask', name: 'MetaMask', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/metamask-icon.svg' },
 ];
 
 export default function SubscriptionPayment({ onBack }: SubscriptionPaymentProps) {
@@ -68,15 +67,15 @@ export default function SubscriptionPayment({ onBack }: SubscriptionPaymentProps
                 selectedPlan === plan.id
                   ? 'bg-gradient-to-r from-green-500 to-emerald-500'
                   : 'bg-white/10'
-              } ${plan.popular ? 'ring-2 ring-green-400' : ''}`}
+              } ${plan.popular ? 'ring-green-400' : ''}`}
             >
               {plan.badge && (
-                <div className="absolute top-3 right-3 bg-green-500 text-white text-xs px-2 py-1 rounded-full z-10">
+                <div className="absolute bottom-3 right-3 bg-green-500 text-white text-xs px-2 py-1 rounded-full z-10">
                   {plan.badge}
                 </div>
               )}
               {plan.popular && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs px-3 py-1 rounded-full z-10 flex items-center gap-1">
+                <div className="absolute top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs px-3 py-1 rounded-full z-10 flex items-center gap-1">
                   <Zap size={12} />
                   最受欢迎
                 </div>
@@ -96,7 +95,7 @@ export default function SubscriptionPayment({ onBack }: SubscriptionPaymentProps
                 </div>
                 <div className="flex items-baseline gap-2 mb-1">
                   <span className="text-3xl font-bold text-white">{plan.price}</span>
-                  <span className="text-white/60">ETH</span>
+                  <span className="text-white/60">USDT</span>
                 </div>
                 <p className="text-white/50 text-sm">{plan.duration}</p>
               </div>
@@ -124,7 +123,7 @@ export default function SubscriptionPayment({ onBack }: SubscriptionPaymentProps
               >
                 <div className="bg-slate-800/90 backdrop-blur-sm rounded-xl p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="text-3xl">{wallet.logo}</span>
+                    <img className="w-8 h-8" src={`${wallet.logo}`} alt={wallet.name} />
                     <span className="text-white font-medium">{wallet.name}</span>
                   </div>
                   {selectedWallet === wallet.id && (
