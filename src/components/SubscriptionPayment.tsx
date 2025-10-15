@@ -47,18 +47,18 @@ export default function SubscriptionPayment({ onBack }: SubscriptionPaymentProps
         animate={{ opacity: 1, y: 0 }}
         className="mb-6"
       >
-        <div className="flex items-center gap-3 mb-2">
-          <motion.button
+        <div className="flex items-center justify-center w-full gap-3 mb-2">
+          {/* <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onBack}
             className="p-2 bg-white/10 rounded-xl hover:bg-white/20 transition-colors"
           >
             <ArrowLeft size={24} className="text-white" />
-          </motion.button>
+          </motion.button> */}
           <h1 className="text-3xl font-bold text-white">订阅支付</h1>
         </div>
-        <p className="text-white/60 ml-14">选择适合您的订阅计划</p>
+        <p className="text-white/60 text-center">选择适合您的订阅计划</p>
       </motion.div>
 
       <div className="flex-1 overflow-y-auto space-y-6 pb-20 scrollbar-hidden">

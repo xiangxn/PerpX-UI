@@ -96,22 +96,22 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center justify-between mb-6"
       >
-        <div className="flex items-center gap-3">
-          <motion.button
+        <div className="flex items-center justify-center w-full gap-3">
+          {/* <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onBack}
             className="p-2 bg-white/10 rounded-xl hover:bg-white/20 transition-colors"
           >
             <ArrowLeft size={24} className="text-white" />
-          </motion.button>
+          </motion.button> */}
           <h1 className="text-3xl font-bold text-white">策略管理</h1>
         </div>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowForm(true)}
-          className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-xl transition-shadow"
+          className="fixed bottom-6 right-6 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-xl transition-shadow z-50"
         >
           <Plus size={20} />
           添加
