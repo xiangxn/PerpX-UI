@@ -50,8 +50,8 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
   const [editingStrategy, setEditingStrategy] = useState<Strategy | null>(null);
 
   const bind = useGesture({
-    onDrag: ({ direction: [xDir], velocity }) => {
-      if (xDir > 20 && velocity > 0.3) {
+    onDrag: ({ movement: [mx], velocity, down }) => {
+      if (!down && mx > 150 && velocity > 0.2) {
         onBack();
       }
     },
