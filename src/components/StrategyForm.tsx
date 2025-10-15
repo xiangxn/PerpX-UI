@@ -45,7 +45,7 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
                 type="text"
                 value={formData.symbol || ''}
                 onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
-                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500"
                 placeholder="BTCUSDT"
               />
             </div>
@@ -54,7 +54,7 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
               <select
                 value={formData.period || '15m'}
                 onChange={(e) => setFormData({ ...formData, period: e.target.value })}
-                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500"
               >
                 <option value="1m">1分钟</option>
                 <option value="5m">5分钟</option>
@@ -69,16 +69,16 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
                 type="number"
                 value={formData.volume || ''}
                 onChange={(e) => setFormData({ ...formData, volume: Number(e.target.value) })}
-                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500"
               />
             </div>
             <div>
-              <label className="block text-white/70 text-sm mb-2">成交额</label>
+              <label className="block text-white/70 text-sm mb-2">24小时成交额</label>
               <input
                 type="number"
                 value={formData.turnover || ''}
                 onChange={(e) => setFormData({ ...formData, turnover: Number(e.target.value) })}
-                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500"
               />
             </div>
             <div>
@@ -88,7 +88,7 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
                 step="0.1"
                 value={formData.amplitudeMultiple || ''}
                 onChange={(e) => setFormData({ ...formData, amplitudeMultiple: Number(e.target.value) })}
-                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500"
               />
             </div>
           </>
@@ -102,7 +102,7 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
                 type="text"
                 value={formData.symbol || ''}
                 onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
-                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full bg-white/10 text-white rounded-md px-3 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500"
                 placeholder="ETHUSDT"
               />
             </div>
@@ -111,13 +111,12 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
               <select
                 value={formData.period || '5m'}
                 onChange={(e) => setFormData({ ...formData, period: e.target.value })}
-                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500"
               >
-                <option value="1m">1分钟</option>
                 <option value="5m">5分钟</option>
                 <option value="15m">15分钟</option>
-                <option value="30m">30分钟</option>
                 <option value="1h">1小时</option>
+                <option value="4h">4小时</option>
               </select>
             </div>
             <div>
@@ -126,16 +125,16 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
                 type="number"
                 value={formData.count || ''}
                 onChange={(e) => setFormData({ ...formData, count: Number(e.target.value) })}
-                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500"
               />
             </div>
             <div>
-              <label className="block text-white/70 text-sm mb-2">成交额</label>
+              <label className="block text-white/70 text-sm mb-2">24小时成交额</label>
               <input
                 type="number"
                 value={formData.turnover || ''}
                 onChange={(e) => setFormData({ ...formData, turnover: Number(e.target.value) })}
-                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500"
               />
             </div>
           </>
@@ -149,7 +148,7 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
                 type="text"
                 value={formData.symbol || ''}
                 onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
-                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500"
                 placeholder="SOLUSDT"
               />
             </div>
@@ -160,7 +159,7 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
                 step="0.0001"
                 value={formData.fundingRate || ''}
                 onChange={(e) => setFormData({ ...formData, fundingRate: Number(e.target.value) })}
-                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500"
               />
             </div>
           </>

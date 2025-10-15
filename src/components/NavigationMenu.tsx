@@ -77,13 +77,13 @@ export default function NavigationMenu({ currentPage, onPageChange }: Navigation
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8 text-center relative z-10"
+        className="mb-6 text-center relative z-10"
       >
         <h1 className="text-4xl font-bold text-white mb-2">PerpX</h1>
         <p className="text-white/60 text-lg">选择功能开始使用</p>
       </motion.div>
 
-      <div className="w-full max-w-md space-y-4 relative z-10">
+      <div className="w-full max-w-md space-y-2.5 relative z-10">
         {menuItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = currentPage === item.id;
