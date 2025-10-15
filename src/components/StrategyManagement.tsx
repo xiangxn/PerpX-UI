@@ -48,21 +48,13 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
   const [strategies, setStrategies] = useState<Strategy[]>(mockStrategies);
   const [showForm, setShowForm] = useState(false);
   const [editingStrategy, setEditingStrategy] = useState<Strategy | null>(null);
-  const [{ x }, api] = useSpring(() => ({ x: 0 }));
 
   const bind = useGesture({
-    onDrag: ({ down, movement: [mx], velocity }) => {
-      if (down) {
-        // 拖动时，跟随手指移动（最大 200px）
-        api.start({ x: Math.max(0, Math.min(mx, 200)), immediate: true });
-      } else {
-        if (mx > 150 && velocity > 0.2) {
-          onBack(); // 触发返回
-        }
-        // 松手后恢复原位
-        api.start({ x: 0, immediate: false });
+    onDrag: ({ direction: [xDir], velocity }) => {
+      if (xDir > 0 && velocity > 0.3) {
+        onBack();
       }
-    }
+    },
   });
 
   const handleDelete = (id: string) => {
