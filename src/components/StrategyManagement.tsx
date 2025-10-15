@@ -91,11 +91,7 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
 
   return (
     <div {...bind()} className="h-full w-full flex flex-col p-6 overflow-hidden mt-2">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between mb-6"
-      >
+      <div className="flex items-center justify-between mb-6" >
         <div className="flex items-center justify-center w-full gap-3">
           {/* <motion.button
             whileHover={{ scale: 1.05 }}
@@ -116,7 +112,7 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
           <Plus size={20} />
           添加
         </motion.button>
-      </motion.div>
+      </div>
 
       <div className="flex-1 overflow-y-auto space-y-4 pb-20 scrollbar-hidden">
         {Object.entries(
