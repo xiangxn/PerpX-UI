@@ -45,9 +45,9 @@ export default function FullScreenNavigation() {
       case 'strategy':
         return <StrategyManagement onBack={handleMenuBack} />;
       case 'calculator':
-        return <PlaceholderPage title="仓位计算器" icon={Calculator} onBack={handleMenuBack} />;
+        return <PlaceholderPage title="仓位计算器" icon={Calculator} onBack={handleMenuBack} url="https://calc.bitsflea.com" />;
       case 'game':
-        return <PlaceholderPage title="小游戏" icon={Gamepad2} onBack={handleMenuBack} />;
+        return <PlaceholderPage title="小游戏" icon={Gamepad2} onBack={handleMenuBack} url="https://rocketrise.pages.dev" />;
       case 'subscription':
         return <SubscriptionPayment onBack={handleMenuBack} />;
       case 'profile':
