@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useGesture } from 'react-use-gesture';
-import { Mail, User, Receipt, Edit2, Check, X, ArrowLeft } from 'lucide-react';
+import { Mail, User, Receipt, Edit2, Check, X } from 'lucide-react';
 import { PaymentRecord, UserProfile } from '../types/strategy';
+import { useSwipeBack } from '@/hooks/useSwipeBack';
+import { animated } from '@react-spring/web';
 
 interface PersonalInfoProps {
   onBack: () => void;
@@ -43,6 +44,7 @@ export default function PersonalInfo({ onBack }: PersonalInfoProps) {
   const [profile, setProfile] = useState(mockProfile);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [newEmail, setNewEmail] = useState(profile.email);
+  const { bind, style } = useSwipeBack({ onBack });
 
   const handleSaveEmail = () => {
     setProfile({ ...profile, email: newEmail });
@@ -54,16 +56,8 @@ export default function PersonalInfo({ onBack }: PersonalInfoProps) {
     setIsEditingEmail(false);
   };
 
-  const bind = useGesture({
-    onDrag: ({ direction: [xDir], velocity }) => {
-      if (xDir > 0 && velocity > 0.3) {
-        onBack();
-      }
-    },
-  });
-
   return (
-    <div {...bind()} className="h-full w-full flex flex-col p-6 overflow-hidden mt-2">
+    <animated.div {...bind()} style={style} className="h-full w-full flex flex-col p-6 overflow-hidden mt-2">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -196,6 +190,6 @@ export default function PersonalInfo({ onBack }: PersonalInfoProps) {
           </div>
         </div>
       </div>
-    </div>
+    </animated.div>
   );
 }

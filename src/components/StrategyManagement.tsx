@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useGesture } from 'react-use-gesture';
-import { Plus, TrendingUp, BarChart3, DollarSign, Edit2, Trash2, ArrowLeft } from 'lucide-react';
+import { Plus, TrendingUp, BarChart3, DollarSign, Edit2, Trash2 } from 'lucide-react';
+import { animated } from '@react-spring/web';
 import { Strategy, StrategyType } from '../types/strategy';
 import StrategyForm from './StrategyForm';
+import { useSwipeBack } from '@/hooks/useSwipeBack';
 
 interface StrategyManagementProps {
   onBack: () => void;
@@ -48,14 +49,7 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
   const [strategies, setStrategies] = useState<Strategy[]>(mockStrategies);
   const [showForm, setShowForm] = useState(false);
   const [editingStrategy, setEditingStrategy] = useState<Strategy | null>(null);
-
-  const bind = useGesture({
-    onDrag: ({ direction: [xDir], velocity }) => {
-      if (xDir > 0 && velocity > 0.3) {
-        onBack();
-      }
-    },
-  });
+  const { bind, style } = useSwipeBack({ onBack });
 
   const handleDelete = (id: string) => {
     setStrategies(strategies.filter(s => s.id !== id));
@@ -90,7 +84,7 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
   }
 
   return (
-    <div {...bind()} className="h-full w-full flex flex-col p-6 overflow-hidden mt-2" >
+    <animated.div {...bind()} style={style} className="h-full w-full flex flex-col p-6 overflow-hidden mt-2">
       <div className="flex items-center justify-between mb-6" >
         <div className="flex items-center justify-center w-full gap-3">
           {/* <motion.button
@@ -225,6 +219,6 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
           );
         })}
       </div>
-    </div>
+    </animated.div>
   );
 }

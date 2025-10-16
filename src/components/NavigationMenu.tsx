@@ -69,6 +69,8 @@ export default function NavigationMenu({ currentPage, onPageChange }: Navigation
             style={{
               left: `${(index * 20) % 80}%`,
               top: `${(index * 30) % 70}%`,
+              willChange: "transform",
+              transform: "translateZ(0)",
             }}
           />
         ))}

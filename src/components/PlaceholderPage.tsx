@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
-import { useGesture } from 'react-use-gesture';
-import { LucideIcon, ArrowLeft } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
+import { useSwipeBack } from '@/hooks/useSwipeBack';
+import { animated } from '@react-spring/web';
 
 interface PlaceholderPageProps {
   title: string;
@@ -9,16 +10,10 @@ interface PlaceholderPageProps {
 }
 
 export default function PlaceholderPage({ title, icon: Icon, onBack }: PlaceholderPageProps) {
-  const bind = useGesture({
-    onDrag: ({ direction: [xDir], velocity }) => {
-      if (xDir > 0 && velocity > 0.3) {
-        onBack();
-      }
-    },
-  });
+  const { bind, style } = useSwipeBack({ onBack });
 
   return (
-    <div {...bind()} className="h-full w-full flex flex-col p-6 mt-2">
+    <animated.div {...bind()} style={style} className="h-full w-full flex flex-col p-6 mt-2">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -80,6 +75,6 @@ export default function PlaceholderPage({ title, icon: Icon, onBack }: Placehold
           </motion.div>
         </div>
       </motion.div>
-    </div>
+    </animated.div>
   );
 }

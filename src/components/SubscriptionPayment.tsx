@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useGesture } from 'react-use-gesture';
-import { Wallet, Check, Zap, ArrowLeft } from 'lucide-react';
+import { Wallet, Check, Zap } from 'lucide-react';
+import { useSwipeBack } from '@/hooks/useSwipeBack';
+import { animated } from '@react-spring/web';
 
 interface SubscriptionPaymentProps {
   onBack: () => void;
@@ -22,6 +23,7 @@ export default function SubscriptionPayment({ onBack }: SubscriptionPaymentProps
   const [selectedPlan, setSelectedPlan] = useState('quarterly');
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const [isPaying, setIsPaying] = useState(false);
+  const { bind, style } = useSwipeBack({ onBack });
 
   const handlePayment = async () => {
     if (!selectedWallet) return;
@@ -32,16 +34,8 @@ export default function SubscriptionPayment({ onBack }: SubscriptionPaymentProps
     alert('支付成功！感谢您的订阅。');
   };
 
-  const bind = useGesture({
-    onDrag: ({ direction: [xDir], velocity }) => {
-      if (xDir > 0 && velocity > 0.3) {
-        onBack();
-      }
-    },
-  });
-
   return (
-    <div {...bind()} className="h-full w-full flex flex-col p-6 overflow-hidden mt-2">
+    <animated.div {...bind()} style={style} className="h-full w-full flex flex-col p-6 overflow-hidden mt-2">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -163,6 +157,6 @@ export default function SubscriptionPayment({ onBack }: SubscriptionPaymentProps
           {isPaying ? '处理中...' : '立即支付'}
         </motion.button>
       </div>
-    </div>
+    </animated.div>
   );
 }
