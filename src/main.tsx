@@ -4,6 +4,10 @@ import App from './App.tsx';
 import './index.css';
 import { AuthProvider } from './context/AuthContext.tsx';
 
+import vConsole from 'vconsole';
+
+new vConsole()
+
 import { init } from '@telegram-apps/sdk-react';
 import "@/mockEnv"
 
