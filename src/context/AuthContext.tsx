@@ -36,21 +36,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userInfo = async () => {
             const token = getToken()
             if (token) {
-                const req = ProfileRequest.create({ token })
-                const userInfo = await client.GetProfile(req)
+                const userInfo = await getUserInfo(token)
                 if (userInfo) {
                     setUser(userInfo as UserProfile)
+                } else {
+                    localStorage.removeItem(TOKEN_KEY)
                 }
             } else if (isTMA()) {
                 const req = TelegramLoginRequest.create({ initData: useRawLaunchParams() })
                 const tgUserInfo = initData.user()
+                console.log("tgUserInfo:", tgUserInfo)
                 const res = await client.LoginWithTelegram(req)
+                console.log("res:", res)
                 if (res) {
-                    localStorage.setItem(`${TOKEN_KEY}_${tgUserInfo?.id}`, res.token)
+                    localStorage.setItem(TOKEN_KEY, res.token)
                 }
-                const userInfo = await client.GetProfile(ProfileRequest.create({ token: res.token }))
+                const userInfo = await getUserInfo(res.token)
+                console.log("userInfo:", userInfo)
                 if (userInfo) {
-                    setUser(userInfo as UserProfile)
+                    const ui = userInfo as UserProfile
+                    ui.avatar = tgUserInfo?.photo_url
+                    setUser(ui)
                 }
             }
         }
