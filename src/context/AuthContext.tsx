@@ -24,7 +24,7 @@ async function getUserInfo(token: string) {
         const req = ProfileRequest.create({ token })
         return await client.GetProfile(req)
     } catch (e) {
-        console.error(e)
+        console.error("getUserInfo error:", e)
     }
     return null
 }
@@ -33,6 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<UserProfile | null>(null);
 
     useEffect(() => {
+        console.log('isTMA:', isTMA());
         const userInfo = async () => {
             const token = getToken()
             if (token) {
