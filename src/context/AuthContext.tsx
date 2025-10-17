@@ -33,9 +33,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<UserProfile | null>(null);
 
     useEffect(() => {
-        console.log('isTMA:', isTMA());
+        console.log('isTMA=', isTMA());
         const userInfo = async () => {
             const token = getToken()
+            console.log("token:", token)
             if (token) {
                 const userInfo = await getUserInfo(token)
                 if (userInfo) {
