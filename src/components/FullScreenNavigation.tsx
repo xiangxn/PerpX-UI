@@ -6,12 +6,15 @@ import StrategyManagement from './StrategyManagement';
 import SubscriptionPayment from './SubscriptionPayment';
 import PersonalInfo from './PersonalInfo';
 import PlaceholderPage from './PlaceholderPage';
+import { isTMA } from '@telegram-apps/bridge';
 
 type Page = 'menu' | 'strategy' | 'calculator' | 'game' | 'subscription' | 'profile';
 
 export default function FullScreenNavigation() {
   const [currentPage, setCurrentPage] = useState<Page>('menu');
   const [direction, setDirection] = useState(0);
+
+  console.log('isTMA:', isTMA());
 
   const handlePageChange = (page: Page, newDirection: number = 1) => {
     setDirection(newDirection);

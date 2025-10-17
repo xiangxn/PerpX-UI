@@ -33,9 +33,13 @@ export type Strategy = VolatilitySpikeStrategy | ConsecutiveMoveStrategy | Fundi
 
 export interface UserProfile {
   telegramId: string;
-  email: string;
+  telegramName: string;
+  maxStrategies: number;
+  active: boolean;
+  subscriptionStart?: string;
+  subscriptionEnd?: string;
+  email?: string;
   avatar?: string;
-  subscriptionDays: number;
 }
 
 export interface PaymentRecord {
