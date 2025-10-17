@@ -1,16 +1,16 @@
 import { UserProfile } from "@/types/strategy";
 import { createContext, useContext, useEffect, useState } from "react";
-import { useRawLaunchParams, initData } from '@telegram-apps/sdk-react';
+import { initData } from '@telegram-apps/sdk-react';
 import { isTMA } from '@telegram-apps/bridge';
-import { PerpxServiceClientImpl, ProfileRequest, TelegramLoginRequest } from "@/grpc/perpx";
-import { GrpcWebRpc } from "@/grpc/rpc";
+import { PerpxServiceClientImpl, ProfileRequest, TelegramLoginRequest, GrpcWebImpl } from "@/grpc/perpx";
+import { grpc } from "@improbable-eng/grpc-web";
 
 interface AuthContextType {
     user: UserProfile | null;
 }
 
 const TOKEN_KEY = "perpx_token";
-const rpc = new GrpcWebRpc('http://api.bitsflea.com:8080')
+const rpc = new GrpcWebImpl('http://api.bitsflea.com:8080', { transport: grpc.CrossBrowserHttpTransport({ withCredentials: false }) })
 const client = new PerpxServiceClientImpl(rpc);
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -22,7 +22,7 @@ function getToken() {
 async function getUserInfo(token: string) {
     try {
         const req = ProfileRequest.create({ token })
-        return await client.GetProfile(req)
+        return await client.getProfile(req)
     } catch (e) {
         console.error("getUserInfo error:", e)
     }
@@ -39,16 +39,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.log("token:", token)
             if (token) {
                 const userInfo = await getUserInfo(token)
+                console.log("userInfo:", userInfo)
                 if (userInfo) {
                     setUser(userInfo as UserProfile)
                 } else {
                     localStorage.removeItem(TOKEN_KEY)
                 }
             } else if (isTMA()) {
-                const tgUserInfo = initData.user()
-                console.log("tgUserInfo:", tgUserInfo)
-                const req = TelegramLoginRequest.create({ initData: useRawLaunchParams() })
-                const res = await client.LoginWithTelegram(req)
+                initData.restore()
+                // const launchParams = retrieveLaunchParams();
+                // console.debug("launchParams:", launchParams)
+                console.debug("userInfo:", initData.user())
+                const req = TelegramLoginRequest.create({ initData: initData.raw() })
+                console.log("req:", req)
+                const res = await client.loginWithTelegram(req)
                 console.log("res:", res)
                 if (res) {
                     localStorage.setItem(TOKEN_KEY, res.token)
@@ -57,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 console.log("userInfo:", userInfo)
                 if (userInfo) {
                     const ui = userInfo as UserProfile
-                    ui.avatar = tgUserInfo?.photo_url
+                    // ui.avatar = initData?.user?.photo_url
                     setUser(ui)
                 }
             }

@@ -10,17 +10,6 @@ interface PersonalInfoProps {
   onBack: () => void;
 }
 
-const mockProfile: UserProfile = {
-  telegramId: '@crypto_trader_123',
-  telegramName: 'crypto_trader_123',
-  email: 'user@example.com',
-  avatar: '👤',
-  subscriptionStart: '2024-04-15',
-  subscriptionEnd: '2100-01-01',
-  maxStrategies: 10,
-  active: true
-};
-
 const mockPayments: PaymentRecord[] = [
   {
     id: '1',
@@ -55,7 +44,7 @@ function getDays(userInfo: UserProfile) {
   return 0
 }
 
-function showInfo(userInfo: UserProfile) {
+function ShowInfo({ userInfo }: { userInfo: UserProfile }) {
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [newEmail, setNewEmail] = useState(userInfo.email);
   const [profile, setProfile] = useState(userInfo);
@@ -217,7 +206,7 @@ export default function PersonalInfo({ onBack }: PersonalInfoProps) {
         )}
       </motion.div>
       {user && (
-        showInfo(user)
+        <ShowInfo userInfo={user!} />
       )}
     </animated.div>
   );

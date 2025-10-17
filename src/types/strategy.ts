@@ -32,7 +32,7 @@ export interface FundingRateStrategy extends BaseStrategy {
 export type Strategy = VolatilitySpikeStrategy | ConsecutiveMoveStrategy | FundingRateStrategy;
 
 export interface UserProfile {
-  telegramId: string;
+  telegramId: number;
   telegramName: string;
   maxStrategies: number;
   active: boolean;

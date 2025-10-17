@@ -6,6 +6,8 @@
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import { grpc } from "@improbable-eng/grpc-web";
+import { BrowserHeaders } from "browser-headers";
 import Long from "long";
 
 export const protobufPackage = "perpx";
@@ -26,7 +28,7 @@ export interface ProfileRequest {
 }
 
 export interface ProfileResponse {
-  telegramId: string;
+  telegramId: number;
   telegramName: string;
   maxStrategies: number;
   active: boolean;
@@ -211,7 +213,7 @@ export const ProfileRequest: MessageFns<ProfileRequest> = {
 
 function createBaseProfileResponse(): ProfileResponse {
   return {
-    telegramId: "",
+    telegramId: 0,
     telegramName: "",
     maxStrategies: 0,
     active: false,
@@ -223,8 +225,8 @@ function createBaseProfileResponse(): ProfileResponse {
 
 export const ProfileResponse: MessageFns<ProfileResponse> = {
   encode(message: ProfileResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.telegramId !== "") {
-      writer.uint32(10).string(message.telegramId);
+    if (message.telegramId !== 0) {
+      writer.uint32(8).int32(message.telegramId);
     }
     if (message.telegramName !== "") {
       writer.uint32(18).string(message.telegramName);
@@ -255,11 +257,11 @@ export const ProfileResponse: MessageFns<ProfileResponse> = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 10) {
+          if (tag !== 8) {
             break;
           }
 
-          message.telegramId = reader.string();
+          message.telegramId = reader.int32();
           continue;
         }
         case 2: {
@@ -321,7 +323,7 @@ export const ProfileResponse: MessageFns<ProfileResponse> = {
 
   fromJSON(object: any): ProfileResponse {
     return {
-      telegramId: isSet(object.telegramId) ? globalThis.String(object.telegramId) : "",
+      telegramId: isSet(object.telegramId) ? globalThis.Number(object.telegramId) : 0,
       telegramName: isSet(object.telegramName) ? globalThis.String(object.telegramName) : "",
       maxStrategies: isSet(object.maxStrategies) ? globalThis.Number(object.maxStrategies) : 0,
       active: isSet(object.active) ? globalThis.Boolean(object.active) : false,
@@ -333,8 +335,8 @@ export const ProfileResponse: MessageFns<ProfileResponse> = {
 
   toJSON(message: ProfileResponse): unknown {
     const obj: any = {};
-    if (message.telegramId !== "") {
-      obj.telegramId = message.telegramId;
+    if (message.telegramId !== 0) {
+      obj.telegramId = Math.round(message.telegramId);
     }
     if (message.telegramName !== "") {
       obj.telegramName = message.telegramName;
@@ -362,7 +364,7 @@ export const ProfileResponse: MessageFns<ProfileResponse> = {
   },
   fromPartial<I extends Exact<DeepPartial<ProfileResponse>, I>>(object: I): ProfileResponse {
     const message = createBaseProfileResponse();
-    message.telegramId = object.telegramId ?? "";
+    message.telegramId = object.telegramId ?? 0;
     message.telegramName = object.telegramName ?? "";
     message.maxStrategies = object.maxStrategies ?? 0;
     message.active = object.active ?? false;
@@ -374,35 +376,142 @@ export const ProfileResponse: MessageFns<ProfileResponse> = {
 };
 
 export interface PerpxService {
-  LoginWithTelegram(request: TelegramLoginRequest): Promise<LoginResponse>;
-  GetProfile(request: ProfileRequest): Promise<ProfileResponse>;
+  loginWithTelegram(request: DeepPartial<TelegramLoginRequest>, metadata?: grpc.Metadata): Promise<LoginResponse>;
+  getProfile(request: DeepPartial<ProfileRequest>, metadata?: grpc.Metadata): Promise<ProfileResponse>;
 }
 
-export const PerpxServiceServiceName = "perpx.PerpxService";
 export class PerpxServiceClientImpl implements PerpxService {
   private readonly rpc: Rpc;
-  private readonly service: string;
-  constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || PerpxServiceServiceName;
+
+  constructor(rpc: Rpc) {
     this.rpc = rpc;
-    this.LoginWithTelegram = this.LoginWithTelegram.bind(this);
-    this.GetProfile = this.GetProfile.bind(this);
-  }
-  LoginWithTelegram(request: TelegramLoginRequest): Promise<LoginResponse> {
-    const data = TelegramLoginRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "LoginWithTelegram", data);
-    return promise.then((data) => LoginResponse.decode(new BinaryReader(data)));
+    this.loginWithTelegram = this.loginWithTelegram.bind(this);
+    this.getProfile = this.getProfile.bind(this);
   }
 
-  GetProfile(request: ProfileRequest): Promise<ProfileResponse> {
-    const data = ProfileRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetProfile", data);
-    return promise.then((data) => ProfileResponse.decode(new BinaryReader(data)));
+  loginWithTelegram(request: DeepPartial<TelegramLoginRequest>, metadata?: grpc.Metadata): Promise<LoginResponse> {
+    return this.rpc.unary(PerpxServiceloginWithTelegramDesc, TelegramLoginRequest.fromPartial(request), metadata);
+  }
+
+  getProfile(request: DeepPartial<ProfileRequest>, metadata?: grpc.Metadata): Promise<ProfileResponse> {
+    return this.rpc.unary(PerpxServicegetProfileDesc, ProfileRequest.fromPartial(request), metadata);
   }
 }
 
+export const PerpxServiceDesc = { serviceName: "perpx.PerpxService" };
+
+export const PerpxServiceloginWithTelegramDesc: UnaryMethodDefinitionish = {
+  methodName: "loginWithTelegram",
+  service: PerpxServiceDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return TelegramLoginRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = LoginResponse.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const PerpxServicegetProfileDesc: UnaryMethodDefinitionish = {
+  methodName: "getProfile",
+  service: PerpxServiceDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return ProfileRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = ProfileResponse.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+interface UnaryMethodDefinitionishR extends grpc.UnaryMethodDefinition<any, any> {
+  requestStream: any;
+  responseStream: any;
+}
+
+type UnaryMethodDefinitionish = UnaryMethodDefinitionishR;
+
 interface Rpc {
-  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
+  unary<T extends UnaryMethodDefinitionish>(
+    methodDesc: T,
+    request: any,
+    metadata: grpc.Metadata | undefined,
+  ): Promise<any>;
+}
+
+export class GrpcWebImpl {
+  private host: string;
+  private options: {
+    transport?: grpc.TransportFactory;
+
+    debug?: boolean;
+    metadata?: grpc.Metadata;
+    upStreamRetryCodes?: number[];
+  };
+
+  constructor(
+    host: string,
+    options: {
+      transport?: grpc.TransportFactory;
+
+      debug?: boolean;
+      metadata?: grpc.Metadata;
+      upStreamRetryCodes?: number[];
+    },
+  ) {
+    this.host = host;
+    this.options = options;
+  }
+
+  unary<T extends UnaryMethodDefinitionish>(
+    methodDesc: T,
+    _request: any,
+    metadata: grpc.Metadata | undefined,
+  ): Promise<any> {
+    const request = { ..._request, ...methodDesc.requestType };
+    const maybeCombinedMetadata = metadata && this.options.metadata
+      ? new BrowserHeaders({ ...this.options?.metadata.headersMap, ...metadata?.headersMap })
+      : metadata ?? this.options.metadata;
+    return new Promise((resolve, reject) => {
+      grpc.unary(methodDesc, {
+        request,
+        host: this.host,
+        metadata: maybeCombinedMetadata ?? {},
+        ...(this.options.transport !== undefined ? { transport: this.options.transport } : {}),
+        debug: this.options.debug ?? false,
+        onEnd: function (response) {
+          if (response.status === grpc.Code.OK) {
+            resolve(response.message!.toObject());
+          } else {
+            const err = new GrpcWebError(response.statusMessage, response.status, response.trailers);
+            reject(err);
+          }
+        },
+      });
+    });
+  }
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
@@ -419,6 +528,12 @@ export type Exact<P, I extends P> = P extends Builtin ? P
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
+}
+
+export class GrpcWebError extends globalThis.Error {
+  constructor(message: string, public code: grpc.Code, public metadata: grpc.Metadata) {
+    super(message);
+  }
 }
 
 export interface MessageFns<T> {
