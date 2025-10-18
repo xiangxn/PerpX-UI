@@ -1,7 +1,7 @@
 import { UserProfile } from "@/types/strategy";
 import { createContext, useContext, useEffect, useState } from "react";
-import { initData } from '@telegram-apps/sdk-react';
-import { isTMA, retrieveLaunchParams } from '@telegram-apps/bridge';
+import { useRawInitData } from '@telegram-apps/sdk-react';
+import { isTMA } from '@telegram-apps/bridge';
 import { PerpxServiceClientImpl, ProfileRequest, TelegramLoginRequest, GrpcWebImpl } from "@/grpc/perpx";
 import { grpc } from "@improbable-eng/grpc-web";
 
@@ -31,6 +31,9 @@ async function getUserInfo(token: string) {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<UserProfile | null>(null);
+    const rawInitData = useRawInitData()
+
+    console.log("rawInitData:", rawInitData)
 
     useEffect(() => {
         console.log('isTMA=', isTMA());
@@ -46,9 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     localStorage.removeItem(TOKEN_KEY)
                 }
             } else if (isTMA()) {
-                initData.restore()
-                console.debug("userInfo:", initData.user())
-                const req = TelegramLoginRequest.create({ initData: initData.raw() })
+                const req = TelegramLoginRequest.create({ initData: rawInitData })
                 console.log("req:", req)
                 const res = await client.loginWithTelegram(req)
                 console.log("res:", res)
