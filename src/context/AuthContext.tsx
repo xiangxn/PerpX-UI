@@ -50,6 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 // const launchParams = retrieveLaunchParams();
                 // console.debug("launchParams:", launchParams)
                 console.debug("userInfo:", initData.user())
+                console.debug("initData:", (window as any).Telegram.WebApp.initData)
                 const req = TelegramLoginRequest.create({ initData: initData.raw() })
                 console.log("req:", req)
                 const res = await client.loginWithTelegram(req)
