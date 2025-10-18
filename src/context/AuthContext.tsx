@@ -46,9 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     localStorage.removeItem(TOKEN_KEY)
                 }
             } else if (isTMA()) {
-                initData.restore()
-                const launchParams = retrieveLaunchParams();
-                console.debug("launchParams:", launchParams)
+                // initData.restore()
                 console.debug("userInfo:", initData.user())
                 const req = TelegramLoginRequest.create({ initData: initData.raw() })
                 console.log("req:", req)
