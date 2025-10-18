@@ -47,8 +47,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 }
             } else if (isTMA()) {
                 initData.restore()
-                const { initDataRaw } = retrieveLaunchParams();
-                console.debug("initDataRaw:", initDataRaw)
+                const launchParams = retrieveLaunchParams();
+                console.debug("launchParams:", launchParams)
                 console.debug("userInfo:", initData.user())
                 const req = TelegramLoginRequest.create({ initData: initData.raw() })
                 console.log("req:", req)
