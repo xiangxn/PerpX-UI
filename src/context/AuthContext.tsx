@@ -1,11 +1,13 @@
 import { UserProfile } from "@/types/strategy";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRawInitData, isTMA } from '@tma.js/sdk-react';
-import { PerpxServiceClientImpl, ProfileRequest, TelegramLoginRequest, GrpcWebImpl } from "@/grpc/perpx";
+import { PerpxServiceClientImpl, ProfileRequest, TelegramLoginRequest, GrpcWebImpl, PerpxService } from "@/grpc/perpx";
 import { grpc } from "@improbable-eng/grpc-web";
 
 interface AuthContextType {
     user: UserProfile | null;
+    rpc: PerpxService;
+    getToken: () => string | null;
 }
 
 const TOKEN_KEY = "perpx_token";
@@ -75,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, [])
 
     return (
-        <AuthContext.Provider value={{ user }}>
+        <AuthContext.Provider value={{ user, rpc: client, getToken }}>
             {children}
         </AuthContext.Provider>
     );

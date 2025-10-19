@@ -1,43 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, TrendingUp, BarChart3, DollarSign, Edit2, Trash2 } from 'lucide-react';
 import { animated } from '@react-spring/web';
-import { Strategy, StrategyType } from '../types/strategy';
+import { ConsecutiveMoveStrategy, FundingRateStrategy, Strategy, StrategyType, VolatilitySpikeStrategy } from '../types/strategy';
 import StrategyForm from './StrategyForm';
 import { useSwipeBack } from '@/hooks/useSwipeBack';
+import { useAuth } from '@/context/AuthContext';
+import { formatNumberEN, printFloat } from '@/utils/helper';
 
 interface StrategyManagementProps {
   onBack: () => void;
 }
-
-const mockStrategies: Strategy[] = [
-  {
-    id: '1',
-    type: 'VolatilitySpike',
-    symbol: 'BTCUSDT',
-    period: '15m',
-    volume: 1000000,
-    turnover: 50000000,
-    amplitudeMultiple: 2.5,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    type: 'ConsecutiveMove',
-    symbol: 'ETHUSDT',
-    period: '5m',
-    count: 3,
-    turnover: 20000000,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    type: 'FundingRate',
-    symbol: 'SOLUSDT',
-    fundingRate: 0.01,
-    createdAt: new Date().toISOString(),
-  },
-];
 
 const typeConfig = {
   VolatilitySpike: { icon: TrendingUp, color: 'from-blue-500 to-cyan-500', name: '波动尖峰' },
@@ -45,14 +18,97 @@ const typeConfig = {
   FundingRate: { icon: DollarSign, color: 'from-green-500 to-emerald-500', name: '资金费率' },
 };
 
+function getParams(strategy: Strategy) {
+  switch (strategy.type) {
+    case 'VolatilitySpike':
+      const vs = strategy as VolatilitySpikeStrategy
+      return JSON.stringify({ volume: vs.volume, turnover: vs.turnover, amplitudeMultiple: vs.amplitudeMultiple })
+    case 'ConsecutiveMove':
+      const cm = strategy as ConsecutiveMoveStrategy
+      return JSON.stringify({ count: cm.count, turnover: cm.turnover })
+    case 'FundingRate':
+      const fr = strategy as FundingRateStrategy
+      return JSON.stringify({ fundingRate: fr.fundingRate })
+    default:
+      break;
+  }
+  return "{}"
+}
+
 export default function StrategyManagement({ onBack }: StrategyManagementProps) {
-  const [strategies, setStrategies] = useState<Strategy[]>(mockStrategies);
+  const [strategies, setStrategies] = useState<Strategy[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingStrategy, setEditingStrategy] = useState<Strategy | null>(null);
   const { bind, style } = useSwipeBack({ onBack });
+  const { rpc, getToken, user } = useAuth()
+  const [refresh, setRefresh] = useState(1)
 
-  const handleDelete = (id: string) => {
-    setStrategies(strategies.filter(s => s.id !== id));
+  useEffect(() => {
+    const getStrategies = async () => {
+      const token = getToken()
+      if (!token) return
+      const res = await rpc.getStrategies({ token })
+      console.log('getStrategies:', res)
+
+      const datas: Strategy[] = []
+      for (let s of res.strategies) {
+        let strategy: Strategy
+        switch (s.strategyType) {
+          case "VolatilitySpike":
+            strategy = {} as VolatilitySpikeStrategy
+            const vss = JSON.parse(s.params)
+            strategy.id = s.id
+            strategy.symbol = s.symbol
+            strategy.type = s.strategyType
+            strategy.period = s.period
+            strategy.volume = vss.volume
+            strategy.turnover = vss.turnover
+            strategy.amplitudeMultiple = vss.amplitudeMultiple
+            datas.push(strategy)
+            break;
+          case "ConsecutiveMove":
+            strategy = {} as ConsecutiveMoveStrategy
+            const obj = JSON.parse(s.params)
+            strategy.id = s.id
+            strategy.symbol = s.symbol
+            strategy.type = s.strategyType
+            strategy.period = s.period
+            strategy.count = obj.count
+            strategy.turnover = obj.turnover
+            datas.push(strategy)
+            break;
+          case "FundingRate":
+            strategy = {} as FundingRateStrategy
+            strategy.id = s.id
+            strategy.symbol = s.symbol
+            strategy.type = s.strategyType
+            strategy.fundingRate = JSON.parse(s.params).fundingRate
+            datas.push(strategy)
+            break;
+          default:
+            break;
+        }
+      }
+
+      setStrategies(datas)
+    }
+    getStrategies();
+  }, [refresh])
+
+  const handleDelete = async (id: number) => {
+    const token = getToken()
+    console.debug('handleDelete:', id, token)
+    if (token) {
+      const result = await rpc.deleteStrategy({
+        token: token!,
+        id: id
+      })
+      console.log('deleteStrategy:', result)
+      if (result && result.success) {
+        setStrategies(strategies.filter(s => s.id !== id));
+        alert('删除成功')
+      }
+    }
   };
 
   const handleEdit = (strategy: Strategy) => {
@@ -60,11 +116,46 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
     setShowForm(true);
   };
 
-  const handleSave = (strategy: Strategy) => {
-    if (editingStrategy) {
-      setStrategies(strategies.map(s => s.id === strategy.id ? strategy : s));
-    } else {
-      setStrategies([...strategies, { ...strategy, id: Date.now().toString(), createdAt: new Date().toISOString() }]);
+  const handleSave = async (strategy: Strategy) => {
+    const token = getToken()
+    console.debug('handleSave:', strategy, token)
+    if (token) {
+      if (user!.maxStrategies === 0) {
+        if (strategy.symbol === '*') {
+          alert('您没有权限添加通配符策略')
+          return
+        }
+      }
+      if (editingStrategy) {
+        // update existing strategy
+        const result = await rpc.updateStrategy({
+          token: token!,
+          id: strategy.id,
+          strategyType: strategy.type,
+          symbol: strategy.symbol,
+          period: strategy.period,
+          params: getParams(strategy)
+        })
+        console.log('updateStrategy:', result)
+        if (result && result.success) {
+          setStrategies(strategies.map(s => s.id === strategy.id ? strategy : s));
+          alert('更新成功')
+        }
+      } else {
+        // add new strategy
+        const result = await rpc.addStrategy({
+          token: token!,
+          strategyType: strategy.type,
+          symbol: strategy.symbol,
+          period: strategy.period,
+          params: getParams(strategy)
+        })
+        console.log('addStrategy:', result)
+        if (result && result.success) {
+          setRefresh(refresh + 1)
+          alert('添加成功')
+        }
+      }
     }
     setShowForm(false);
     setEditingStrategy(null);
@@ -82,6 +173,7 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
       />
     );
   }
+
 
   return (
     <animated.div {...bind()} style={style} className="h-full w-full flex flex-col p-6 overflow-hidden mt-2">
@@ -181,11 +273,11 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
                           </div>
                           <div className="bg-white/5 rounded-lg p-2">
                             <span className="text-white/50">成交量:</span>
-                            <span className="text-white ml-2">{(strategy.volume / 1000000).toFixed(1)}M</span>
+                            <span className="text-white ml-2">{formatNumberEN(strategy.volume)}</span>
                           </div>
                           <div className="bg-white/5 rounded-lg p-2">
                             <span className="text-white/50">成交额:</span>
-                            <span className="text-white ml-2">{(strategy.turnover / 1000000).toFixed(1)}M</span>
+                            <span className="text-white ml-2">{formatNumberEN(strategy.turnover)}</span>
                           </div>
                         </>
                       )}
@@ -201,14 +293,14 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
                           </div>
                           <div className="bg-white/5 rounded-lg p-2 col-span-2">
                             <span className="text-white/50">成交额:</span>
-                            <span className="text-white ml-2">{(strategy.turnover / 1000000).toFixed(1)}M</span>
+                            <span className="text-white ml-2">{formatNumberEN(strategy.turnover)}</span>
                           </div>
                         </>
                       )}
                       {strategy.type === 'FundingRate' && (
                         <div className="bg-white/5 rounded-lg p-2 col-span-2">
                           <span className="text-white/50">费率:</span>
-                          <span className="text-white ml-2">{(strategy.fundingRate * 100).toFixed(2)}%</span>
+                          <span className="text-white ml-2">{printFloat(strategy.fundingRate * 100, 4)}%</span>
                         </div>
                       )}
                     </div>

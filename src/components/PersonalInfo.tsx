@@ -1,38 +1,31 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, User, Receipt, Edit2, Check, X } from 'lucide-react';
-import { PaymentRecord, UserProfile } from '../types/strategy';
+import { UserProfile } from '../types/strategy';
 import { useSwipeBack } from '@/hooks/useSwipeBack';
 import { animated } from '@react-spring/web';
 import { useAuth } from '@/context/AuthContext';
+import { Invoice } from '@/grpc/perpx';
+import dayjs from 'dayjs';
+import { capitalizeFirstLetter, cutTxId } from '@/utils/helper';
 
 interface PersonalInfoProps {
   onBack: () => void;
 }
 
-const mockPayments: PaymentRecord[] = [
-  {
-    id: '1',
-    date: '2024-10-15',
-    amount: 25,
-    duration: '季度订阅',
-    txHash: '0x1234...5678',
-  },
-  {
-    id: '2',
-    date: '2024-07-15',
-    amount: 25,
-    duration: '季度订阅',
-    txHash: '0x8765...4321',
-  },
-  {
-    id: '3',
-    date: '2024-04-15',
-    amount: 10,
-    duration: '月度订阅',
-    txHash: '0xabcd...efgh',
-  },
-];
+function showTxId(chain: string, txId: string) {
+  const cTx = cutTxId(txId)
+  switch (chain) {
+    case 'BSC':
+      return (
+        <a href={`https://bscscan.com/tx/${txId}`} target="_blank" className="text-cyan-400">
+          {cTx}
+        </a>
+      )
+    default:
+      return cTx
+  }
+}
 
 function getDays(userInfo: UserProfile) {
   if (userInfo.subscriptionEnd) {
@@ -48,9 +41,16 @@ function ShowInfo({ userInfo }: { userInfo: UserProfile }) {
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [newEmail, setNewEmail] = useState(userInfo.email);
   const [profile, setProfile] = useState(userInfo);
+  const { rpc, getToken } = useAuth()
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const [payments, setPayments] = useState<Invoice[]>([]);
 
-  const handleSaveEmail = () => {
-    setProfile({ ...profile, email: newEmail });
+  const handleSaveEmail = async () => {
+    const res = await rpc.updateEmail({ token: getToken()!, email: newEmail })
+    if (res.success) {
+      setProfile({ ...profile, email: newEmail });
+    }
     setIsEditingEmail(false);
   };
 
@@ -58,6 +58,15 @@ function ShowInfo({ userInfo }: { userInfo: UserProfile }) {
     setNewEmail(profile.email);
     setIsEditingEmail(false);
   };
+
+  useEffect(() => {
+    const getPayments = async () => {
+      const res = await rpc.getInvoices({ token: getToken()!, page, pageSize })
+      console.debug('getInvoices:', res)
+      setPayments(res.invoices)
+    }
+    getPayments()
+  }, [userInfo, page])
 
   return (
     <div className="flex-1 overflow-y-auto space-y-6 pb-20 scrollbar-hidden">
@@ -67,7 +76,12 @@ function ShowInfo({ userInfo }: { userInfo: UserProfile }) {
         className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 backdrop-blur-sm p-6 rounded-2xl border border-white/10"
       >
         <div className="flex items-center gap-4 mb-4">
-          <div className="text-5xl">{profile.avatar}</div>
+          {profile.avatar ? (
+            <div className="text-5xl"><img src={profile.avatar} className="w-12 h-12" /></div>
+          ) : (
+            <div className="text-5xl">👤</div>
+          )}
+
           <div>
             <h2 className="text-2xl font-bold text-white">欢迎回来!</h2>
             <p className="text-white/60">管理您的账户信息</p>
@@ -149,26 +163,28 @@ function ShowInfo({ userInfo }: { userInfo: UserProfile }) {
         </div>
 
         <div className="space-y-3">
-          {mockPayments.map((payment, index) => (
+          {payments.map((payment, index) => (
             <motion.div
-              key={payment.id}
+              key={payment.invoiceId}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
               className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-white font-medium">{payment.duration}</span>
-                <span className="text-green-400 font-bold">{payment.amount} USDT</span>
+                <span className="text-white font-medium">{capitalizeFirstLetter(payment.status)}</span>
+                <span className="text-green-400 font-bold">{parseFloat(payment.amount).toFixed(2)} {payment.currency}</span>
               </div>
               <div className="space-y-1 text-sm">
                 <div className="flex items-center justify-between text-white/50">
                   <span>日期:</span>
-                  <span>{payment.date}</span>
+                  <span>{dayjs(payment.paidAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                 </div>
                 <div className="flex items-center justify-between text-white/50">
                   <span>交易哈希:</span>
-                  <span className="font-mono">{payment.txHash}</span>
+                  <span className="font-mono">
+                    {showTxId(payment.chain, payment.txHash)}
+                  </span>
                 </div>
               </div>
             </motion.div>

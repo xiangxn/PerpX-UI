@@ -12,6 +12,21 @@ import Long from "long";
 
 export const protobufPackage = "perpx";
 
+export interface DefaultResponse {
+  success: boolean;
+  message?: string | undefined;
+}
+
+export interface UpdateAvatarRequest {
+  token: string;
+  avatar: string;
+}
+
+export interface UpdateEmailRequest {
+  token: string;
+  email: string;
+}
+
 export interface TelegramLoginRequest {
   /** Telegram 提供的 initData */
   initData: string;
@@ -28,7 +43,7 @@ export interface ProfileRequest {
 }
 
 export interface ProfileResponse {
-  telegramId: number;
+  telegramId: Long;
   telegramName: string;
   maxStrategies: number;
   active: boolean;
@@ -37,6 +52,296 @@ export interface ProfileResponse {
   email?: string | undefined;
   avatar?: string | undefined;
 }
+
+export interface GetInvoicesRequest {
+  token: string;
+  page: number;
+  pageSize: number;
+}
+
+export interface GetInvoicesResponse {
+  invoices: Invoice[];
+  total: number;
+}
+
+export interface Invoice {
+  invoiceId: string;
+  amount: string;
+  currency: string;
+  chain: string;
+  status: string;
+  paidAt: string;
+  txHash: string;
+  confirmations: number;
+}
+
+export interface GetStrategiesRequest {
+  token: string;
+}
+
+export interface GetStrategiesResponse {
+  strategies: Strategy[];
+}
+
+export interface Strategy {
+  id: number;
+  userId: number;
+  strategyType: string;
+  symbol: string;
+  period: string;
+  params: string;
+  isActive: boolean;
+}
+
+export interface UpdateStrategyRequest {
+  token: string;
+  id: number;
+  strategyType: string;
+  symbol: string;
+  period: string;
+  params: string;
+}
+
+export interface AddStrategyRequest {
+  token: string;
+  strategyType: string;
+  symbol: string;
+  period: string;
+  params: string;
+}
+
+export interface DeleteStrategyRequest {
+  token: string;
+  id: number;
+}
+
+function createBaseDefaultResponse(): DefaultResponse {
+  return { success: false, message: undefined };
+}
+
+export const DefaultResponse: MessageFns<DefaultResponse> = {
+  encode(message: DefaultResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.success !== false) {
+      writer.uint32(8).bool(message.success);
+    }
+    if (message.message !== undefined) {
+      writer.uint32(18).string(message.message);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): DefaultResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDefaultResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.success = reader.bool();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.message = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DefaultResponse {
+    return {
+      success: isSet(object.success) ? globalThis.Boolean(object.success) : false,
+      message: isSet(object.message) ? globalThis.String(object.message) : undefined,
+    };
+  },
+
+  toJSON(message: DefaultResponse): unknown {
+    const obj: any = {};
+    if (message.success !== false) {
+      obj.success = message.success;
+    }
+    if (message.message !== undefined) {
+      obj.message = message.message;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DefaultResponse>, I>>(base?: I): DefaultResponse {
+    return DefaultResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<DefaultResponse>, I>>(object: I): DefaultResponse {
+    const message = createBaseDefaultResponse();
+    message.success = object.success ?? false;
+    message.message = object.message ?? undefined;
+    return message;
+  },
+};
+
+function createBaseUpdateAvatarRequest(): UpdateAvatarRequest {
+  return { token: "", avatar: "" };
+}
+
+export const UpdateAvatarRequest: MessageFns<UpdateAvatarRequest> = {
+  encode(message: UpdateAvatarRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.token !== "") {
+      writer.uint32(10).string(message.token);
+    }
+    if (message.avatar !== "") {
+      writer.uint32(18).string(message.avatar);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): UpdateAvatarRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateAvatarRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.token = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.avatar = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdateAvatarRequest {
+    return {
+      token: isSet(object.token) ? globalThis.String(object.token) : "",
+      avatar: isSet(object.avatar) ? globalThis.String(object.avatar) : "",
+    };
+  },
+
+  toJSON(message: UpdateAvatarRequest): unknown {
+    const obj: any = {};
+    if (message.token !== "") {
+      obj.token = message.token;
+    }
+    if (message.avatar !== "") {
+      obj.avatar = message.avatar;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<UpdateAvatarRequest>, I>>(base?: I): UpdateAvatarRequest {
+    return UpdateAvatarRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<UpdateAvatarRequest>, I>>(object: I): UpdateAvatarRequest {
+    const message = createBaseUpdateAvatarRequest();
+    message.token = object.token ?? "";
+    message.avatar = object.avatar ?? "";
+    return message;
+  },
+};
+
+function createBaseUpdateEmailRequest(): UpdateEmailRequest {
+  return { token: "", email: "" };
+}
+
+export const UpdateEmailRequest: MessageFns<UpdateEmailRequest> = {
+  encode(message: UpdateEmailRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.token !== "") {
+      writer.uint32(10).string(message.token);
+    }
+    if (message.email !== "") {
+      writer.uint32(18).string(message.email);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): UpdateEmailRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateEmailRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.token = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.email = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdateEmailRequest {
+    return {
+      token: isSet(object.token) ? globalThis.String(object.token) : "",
+      email: isSet(object.email) ? globalThis.String(object.email) : "",
+    };
+  },
+
+  toJSON(message: UpdateEmailRequest): unknown {
+    const obj: any = {};
+    if (message.token !== "") {
+      obj.token = message.token;
+    }
+    if (message.email !== "") {
+      obj.email = message.email;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<UpdateEmailRequest>, I>>(base?: I): UpdateEmailRequest {
+    return UpdateEmailRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<UpdateEmailRequest>, I>>(object: I): UpdateEmailRequest {
+    const message = createBaseUpdateEmailRequest();
+    message.token = object.token ?? "";
+    message.email = object.email ?? "";
+    return message;
+  },
+};
 
 function createBaseTelegramLoginRequest(): TelegramLoginRequest {
   return { initData: "" };
@@ -214,7 +519,7 @@ export const ProfileRequest: MessageFns<ProfileRequest> = {
 
 function createBaseProfileResponse(): ProfileResponse {
   return {
-    telegramId: 0,
+    telegramId: Long.ZERO,
     telegramName: "",
     maxStrategies: 0,
     active: false,
@@ -227,8 +532,8 @@ function createBaseProfileResponse(): ProfileResponse {
 
 export const ProfileResponse: MessageFns<ProfileResponse> = {
   encode(message: ProfileResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.telegramId !== 0) {
-      writer.uint32(8).int32(message.telegramId);
+    if (!message.telegramId.equals(Long.ZERO)) {
+      writer.uint32(8).int64(message.telegramId.toString());
     }
     if (message.telegramName !== "") {
       writer.uint32(18).string(message.telegramName);
@@ -266,7 +571,7 @@ export const ProfileResponse: MessageFns<ProfileResponse> = {
             break;
           }
 
-          message.telegramId = reader.int32();
+          message.telegramId = Long.fromString(reader.int64().toString());
           continue;
         }
         case 2: {
@@ -336,7 +641,7 @@ export const ProfileResponse: MessageFns<ProfileResponse> = {
 
   fromJSON(object: any): ProfileResponse {
     return {
-      telegramId: isSet(object.telegramId) ? globalThis.Number(object.telegramId) : 0,
+      telegramId: isSet(object.telegramId) ? Long.fromValue(object.telegramId) : Long.ZERO,
       telegramName: isSet(object.telegramName) ? globalThis.String(object.telegramName) : "",
       maxStrategies: isSet(object.maxStrategies) ? globalThis.Number(object.maxStrategies) : 0,
       active: isSet(object.active) ? globalThis.Boolean(object.active) : false,
@@ -349,8 +654,8 @@ export const ProfileResponse: MessageFns<ProfileResponse> = {
 
   toJSON(message: ProfileResponse): unknown {
     const obj: any = {};
-    if (message.telegramId !== 0) {
-      obj.telegramId = Math.round(message.telegramId);
+    if (!message.telegramId.equals(Long.ZERO)) {
+      obj.telegramId = (message.telegramId || Long.ZERO).toString();
     }
     if (message.telegramName !== "") {
       obj.telegramName = message.telegramName;
@@ -381,7 +686,9 @@ export const ProfileResponse: MessageFns<ProfileResponse> = {
   },
   fromPartial<I extends Exact<DeepPartial<ProfileResponse>, I>>(object: I): ProfileResponse {
     const message = createBaseProfileResponse();
-    message.telegramId = object.telegramId ?? 0;
+    message.telegramId = (object.telegramId !== undefined && object.telegramId !== null)
+      ? Long.fromValue(object.telegramId)
+      : Long.ZERO;
     message.telegramName = object.telegramName ?? "";
     message.maxStrategies = object.maxStrategies ?? 0;
     message.active = object.active ?? false;
@@ -393,9 +700,972 @@ export const ProfileResponse: MessageFns<ProfileResponse> = {
   },
 };
 
+function createBaseGetInvoicesRequest(): GetInvoicesRequest {
+  return { token: "", page: 0, pageSize: 0 };
+}
+
+export const GetInvoicesRequest: MessageFns<GetInvoicesRequest> = {
+  encode(message: GetInvoicesRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.token !== "") {
+      writer.uint32(10).string(message.token);
+    }
+    if (message.page !== 0) {
+      writer.uint32(16).int32(message.page);
+    }
+    if (message.pageSize !== 0) {
+      writer.uint32(24).int32(message.pageSize);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetInvoicesRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetInvoicesRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.token = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.page = reader.int32();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.pageSize = reader.int32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetInvoicesRequest {
+    return {
+      token: isSet(object.token) ? globalThis.String(object.token) : "",
+      page: isSet(object.page) ? globalThis.Number(object.page) : 0,
+      pageSize: isSet(object.pageSize) ? globalThis.Number(object.pageSize) : 0,
+    };
+  },
+
+  toJSON(message: GetInvoicesRequest): unknown {
+    const obj: any = {};
+    if (message.token !== "") {
+      obj.token = message.token;
+    }
+    if (message.page !== 0) {
+      obj.page = Math.round(message.page);
+    }
+    if (message.pageSize !== 0) {
+      obj.pageSize = Math.round(message.pageSize);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetInvoicesRequest>, I>>(base?: I): GetInvoicesRequest {
+    return GetInvoicesRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetInvoicesRequest>, I>>(object: I): GetInvoicesRequest {
+    const message = createBaseGetInvoicesRequest();
+    message.token = object.token ?? "";
+    message.page = object.page ?? 0;
+    message.pageSize = object.pageSize ?? 0;
+    return message;
+  },
+};
+
+function createBaseGetInvoicesResponse(): GetInvoicesResponse {
+  return { invoices: [], total: 0 };
+}
+
+export const GetInvoicesResponse: MessageFns<GetInvoicesResponse> = {
+  encode(message: GetInvoicesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.invoices) {
+      Invoice.encode(v!, writer.uint32(10).fork()).join();
+    }
+    if (message.total !== 0) {
+      writer.uint32(16).int32(message.total);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetInvoicesResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetInvoicesResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.invoices.push(Invoice.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.total = reader.int32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetInvoicesResponse {
+    return {
+      invoices: globalThis.Array.isArray(object?.invoices) ? object.invoices.map((e: any) => Invoice.fromJSON(e)) : [],
+      total: isSet(object.total) ? globalThis.Number(object.total) : 0,
+    };
+  },
+
+  toJSON(message: GetInvoicesResponse): unknown {
+    const obj: any = {};
+    if (message.invoices?.length) {
+      obj.invoices = message.invoices.map((e) => Invoice.toJSON(e));
+    }
+    if (message.total !== 0) {
+      obj.total = Math.round(message.total);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetInvoicesResponse>, I>>(base?: I): GetInvoicesResponse {
+    return GetInvoicesResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetInvoicesResponse>, I>>(object: I): GetInvoicesResponse {
+    const message = createBaseGetInvoicesResponse();
+    message.invoices = object.invoices?.map((e) => Invoice.fromPartial(e)) || [];
+    message.total = object.total ?? 0;
+    return message;
+  },
+};
+
+function createBaseInvoice(): Invoice {
+  return { invoiceId: "", amount: "", currency: "", chain: "", status: "", paidAt: "", txHash: "", confirmations: 0 };
+}
+
+export const Invoice: MessageFns<Invoice> = {
+  encode(message: Invoice, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.invoiceId !== "") {
+      writer.uint32(10).string(message.invoiceId);
+    }
+    if (message.amount !== "") {
+      writer.uint32(18).string(message.amount);
+    }
+    if (message.currency !== "") {
+      writer.uint32(26).string(message.currency);
+    }
+    if (message.chain !== "") {
+      writer.uint32(34).string(message.chain);
+    }
+    if (message.status !== "") {
+      writer.uint32(42).string(message.status);
+    }
+    if (message.paidAt !== "") {
+      writer.uint32(50).string(message.paidAt);
+    }
+    if (message.txHash !== "") {
+      writer.uint32(58).string(message.txHash);
+    }
+    if (message.confirmations !== 0) {
+      writer.uint32(64).int32(message.confirmations);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Invoice {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseInvoice();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.invoiceId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.amount = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.currency = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.chain = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.status = reader.string();
+          continue;
+        }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.paidAt = reader.string();
+          continue;
+        }
+        case 7: {
+          if (tag !== 58) {
+            break;
+          }
+
+          message.txHash = reader.string();
+          continue;
+        }
+        case 8: {
+          if (tag !== 64) {
+            break;
+          }
+
+          message.confirmations = reader.int32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Invoice {
+    return {
+      invoiceId: isSet(object.invoiceId) ? globalThis.String(object.invoiceId) : "",
+      amount: isSet(object.amount) ? globalThis.String(object.amount) : "",
+      currency: isSet(object.currency) ? globalThis.String(object.currency) : "",
+      chain: isSet(object.chain) ? globalThis.String(object.chain) : "",
+      status: isSet(object.status) ? globalThis.String(object.status) : "",
+      paidAt: isSet(object.paidAt) ? globalThis.String(object.paidAt) : "",
+      txHash: isSet(object.txHash) ? globalThis.String(object.txHash) : "",
+      confirmations: isSet(object.confirmations) ? globalThis.Number(object.confirmations) : 0,
+    };
+  },
+
+  toJSON(message: Invoice): unknown {
+    const obj: any = {};
+    if (message.invoiceId !== "") {
+      obj.invoiceId = message.invoiceId;
+    }
+    if (message.amount !== "") {
+      obj.amount = message.amount;
+    }
+    if (message.currency !== "") {
+      obj.currency = message.currency;
+    }
+    if (message.chain !== "") {
+      obj.chain = message.chain;
+    }
+    if (message.status !== "") {
+      obj.status = message.status;
+    }
+    if (message.paidAt !== "") {
+      obj.paidAt = message.paidAt;
+    }
+    if (message.txHash !== "") {
+      obj.txHash = message.txHash;
+    }
+    if (message.confirmations !== 0) {
+      obj.confirmations = Math.round(message.confirmations);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Invoice>, I>>(base?: I): Invoice {
+    return Invoice.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Invoice>, I>>(object: I): Invoice {
+    const message = createBaseInvoice();
+    message.invoiceId = object.invoiceId ?? "";
+    message.amount = object.amount ?? "";
+    message.currency = object.currency ?? "";
+    message.chain = object.chain ?? "";
+    message.status = object.status ?? "";
+    message.paidAt = object.paidAt ?? "";
+    message.txHash = object.txHash ?? "";
+    message.confirmations = object.confirmations ?? 0;
+    return message;
+  },
+};
+
+function createBaseGetStrategiesRequest(): GetStrategiesRequest {
+  return { token: "" };
+}
+
+export const GetStrategiesRequest: MessageFns<GetStrategiesRequest> = {
+  encode(message: GetStrategiesRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.token !== "") {
+      writer.uint32(10).string(message.token);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetStrategiesRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetStrategiesRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.token = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetStrategiesRequest {
+    return { token: isSet(object.token) ? globalThis.String(object.token) : "" };
+  },
+
+  toJSON(message: GetStrategiesRequest): unknown {
+    const obj: any = {};
+    if (message.token !== "") {
+      obj.token = message.token;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetStrategiesRequest>, I>>(base?: I): GetStrategiesRequest {
+    return GetStrategiesRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetStrategiesRequest>, I>>(object: I): GetStrategiesRequest {
+    const message = createBaseGetStrategiesRequest();
+    message.token = object.token ?? "";
+    return message;
+  },
+};
+
+function createBaseGetStrategiesResponse(): GetStrategiesResponse {
+  return { strategies: [] };
+}
+
+export const GetStrategiesResponse: MessageFns<GetStrategiesResponse> = {
+  encode(message: GetStrategiesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.strategies) {
+      Strategy.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetStrategiesResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetStrategiesResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.strategies.push(Strategy.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetStrategiesResponse {
+    return {
+      strategies: globalThis.Array.isArray(object?.strategies)
+        ? object.strategies.map((e: any) => Strategy.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: GetStrategiesResponse): unknown {
+    const obj: any = {};
+    if (message.strategies?.length) {
+      obj.strategies = message.strategies.map((e) => Strategy.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetStrategiesResponse>, I>>(base?: I): GetStrategiesResponse {
+    return GetStrategiesResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetStrategiesResponse>, I>>(object: I): GetStrategiesResponse {
+    const message = createBaseGetStrategiesResponse();
+    message.strategies = object.strategies?.map((e) => Strategy.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseStrategy(): Strategy {
+  return { id: 0, userId: 0, strategyType: "", symbol: "", period: "", params: "", isActive: false };
+}
+
+export const Strategy: MessageFns<Strategy> = {
+  encode(message: Strategy, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.id !== 0) {
+      writer.uint32(8).int32(message.id);
+    }
+    if (message.userId !== 0) {
+      writer.uint32(16).int32(message.userId);
+    }
+    if (message.strategyType !== "") {
+      writer.uint32(26).string(message.strategyType);
+    }
+    if (message.symbol !== "") {
+      writer.uint32(34).string(message.symbol);
+    }
+    if (message.period !== "") {
+      writer.uint32(42).string(message.period);
+    }
+    if (message.params !== "") {
+      writer.uint32(50).string(message.params);
+    }
+    if (message.isActive !== false) {
+      writer.uint32(56).bool(message.isActive);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Strategy {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseStrategy();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.id = reader.int32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.userId = reader.int32();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.strategyType = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.symbol = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.period = reader.string();
+          continue;
+        }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.params = reader.string();
+          continue;
+        }
+        case 7: {
+          if (tag !== 56) {
+            break;
+          }
+
+          message.isActive = reader.bool();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Strategy {
+    return {
+      id: isSet(object.id) ? globalThis.Number(object.id) : 0,
+      userId: isSet(object.userId) ? globalThis.Number(object.userId) : 0,
+      strategyType: isSet(object.strategyType) ? globalThis.String(object.strategyType) : "",
+      symbol: isSet(object.symbol) ? globalThis.String(object.symbol) : "",
+      period: isSet(object.period) ? globalThis.String(object.period) : "",
+      params: isSet(object.params) ? globalThis.String(object.params) : "",
+      isActive: isSet(object.isActive) ? globalThis.Boolean(object.isActive) : false,
+    };
+  },
+
+  toJSON(message: Strategy): unknown {
+    const obj: any = {};
+    if (message.id !== 0) {
+      obj.id = Math.round(message.id);
+    }
+    if (message.userId !== 0) {
+      obj.userId = Math.round(message.userId);
+    }
+    if (message.strategyType !== "") {
+      obj.strategyType = message.strategyType;
+    }
+    if (message.symbol !== "") {
+      obj.symbol = message.symbol;
+    }
+    if (message.period !== "") {
+      obj.period = message.period;
+    }
+    if (message.params !== "") {
+      obj.params = message.params;
+    }
+    if (message.isActive !== false) {
+      obj.isActive = message.isActive;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Strategy>, I>>(base?: I): Strategy {
+    return Strategy.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Strategy>, I>>(object: I): Strategy {
+    const message = createBaseStrategy();
+    message.id = object.id ?? 0;
+    message.userId = object.userId ?? 0;
+    message.strategyType = object.strategyType ?? "";
+    message.symbol = object.symbol ?? "";
+    message.period = object.period ?? "";
+    message.params = object.params ?? "";
+    message.isActive = object.isActive ?? false;
+    return message;
+  },
+};
+
+function createBaseUpdateStrategyRequest(): UpdateStrategyRequest {
+  return { token: "", id: 0, strategyType: "", symbol: "", period: "", params: "" };
+}
+
+export const UpdateStrategyRequest: MessageFns<UpdateStrategyRequest> = {
+  encode(message: UpdateStrategyRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.token !== "") {
+      writer.uint32(10).string(message.token);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).int32(message.id);
+    }
+    if (message.strategyType !== "") {
+      writer.uint32(26).string(message.strategyType);
+    }
+    if (message.symbol !== "") {
+      writer.uint32(34).string(message.symbol);
+    }
+    if (message.period !== "") {
+      writer.uint32(42).string(message.period);
+    }
+    if (message.params !== "") {
+      writer.uint32(50).string(message.params);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): UpdateStrategyRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateStrategyRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.token = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.id = reader.int32();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.strategyType = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.symbol = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.period = reader.string();
+          continue;
+        }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.params = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdateStrategyRequest {
+    return {
+      token: isSet(object.token) ? globalThis.String(object.token) : "",
+      id: isSet(object.id) ? globalThis.Number(object.id) : 0,
+      strategyType: isSet(object.strategyType) ? globalThis.String(object.strategyType) : "",
+      symbol: isSet(object.symbol) ? globalThis.String(object.symbol) : "",
+      period: isSet(object.period) ? globalThis.String(object.period) : "",
+      params: isSet(object.params) ? globalThis.String(object.params) : "",
+    };
+  },
+
+  toJSON(message: UpdateStrategyRequest): unknown {
+    const obj: any = {};
+    if (message.token !== "") {
+      obj.token = message.token;
+    }
+    if (message.id !== 0) {
+      obj.id = Math.round(message.id);
+    }
+    if (message.strategyType !== "") {
+      obj.strategyType = message.strategyType;
+    }
+    if (message.symbol !== "") {
+      obj.symbol = message.symbol;
+    }
+    if (message.period !== "") {
+      obj.period = message.period;
+    }
+    if (message.params !== "") {
+      obj.params = message.params;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<UpdateStrategyRequest>, I>>(base?: I): UpdateStrategyRequest {
+    return UpdateStrategyRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<UpdateStrategyRequest>, I>>(object: I): UpdateStrategyRequest {
+    const message = createBaseUpdateStrategyRequest();
+    message.token = object.token ?? "";
+    message.id = object.id ?? 0;
+    message.strategyType = object.strategyType ?? "";
+    message.symbol = object.symbol ?? "";
+    message.period = object.period ?? "";
+    message.params = object.params ?? "";
+    return message;
+  },
+};
+
+function createBaseAddStrategyRequest(): AddStrategyRequest {
+  return { token: "", strategyType: "", symbol: "", period: "", params: "" };
+}
+
+export const AddStrategyRequest: MessageFns<AddStrategyRequest> = {
+  encode(message: AddStrategyRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.token !== "") {
+      writer.uint32(10).string(message.token);
+    }
+    if (message.strategyType !== "") {
+      writer.uint32(18).string(message.strategyType);
+    }
+    if (message.symbol !== "") {
+      writer.uint32(26).string(message.symbol);
+    }
+    if (message.period !== "") {
+      writer.uint32(34).string(message.period);
+    }
+    if (message.params !== "") {
+      writer.uint32(42).string(message.params);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): AddStrategyRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseAddStrategyRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.token = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.strategyType = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.symbol = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.period = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.params = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): AddStrategyRequest {
+    return {
+      token: isSet(object.token) ? globalThis.String(object.token) : "",
+      strategyType: isSet(object.strategyType) ? globalThis.String(object.strategyType) : "",
+      symbol: isSet(object.symbol) ? globalThis.String(object.symbol) : "",
+      period: isSet(object.period) ? globalThis.String(object.period) : "",
+      params: isSet(object.params) ? globalThis.String(object.params) : "",
+    };
+  },
+
+  toJSON(message: AddStrategyRequest): unknown {
+    const obj: any = {};
+    if (message.token !== "") {
+      obj.token = message.token;
+    }
+    if (message.strategyType !== "") {
+      obj.strategyType = message.strategyType;
+    }
+    if (message.symbol !== "") {
+      obj.symbol = message.symbol;
+    }
+    if (message.period !== "") {
+      obj.period = message.period;
+    }
+    if (message.params !== "") {
+      obj.params = message.params;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<AddStrategyRequest>, I>>(base?: I): AddStrategyRequest {
+    return AddStrategyRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<AddStrategyRequest>, I>>(object: I): AddStrategyRequest {
+    const message = createBaseAddStrategyRequest();
+    message.token = object.token ?? "";
+    message.strategyType = object.strategyType ?? "";
+    message.symbol = object.symbol ?? "";
+    message.period = object.period ?? "";
+    message.params = object.params ?? "";
+    return message;
+  },
+};
+
+function createBaseDeleteStrategyRequest(): DeleteStrategyRequest {
+  return { token: "", id: 0 };
+}
+
+export const DeleteStrategyRequest: MessageFns<DeleteStrategyRequest> = {
+  encode(message: DeleteStrategyRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.token !== "") {
+      writer.uint32(10).string(message.token);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).int32(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): DeleteStrategyRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDeleteStrategyRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.token = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.id = reader.int32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DeleteStrategyRequest {
+    return {
+      token: isSet(object.token) ? globalThis.String(object.token) : "",
+      id: isSet(object.id) ? globalThis.Number(object.id) : 0,
+    };
+  },
+
+  toJSON(message: DeleteStrategyRequest): unknown {
+    const obj: any = {};
+    if (message.token !== "") {
+      obj.token = message.token;
+    }
+    if (message.id !== 0) {
+      obj.id = Math.round(message.id);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DeleteStrategyRequest>, I>>(base?: I): DeleteStrategyRequest {
+    return DeleteStrategyRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<DeleteStrategyRequest>, I>>(object: I): DeleteStrategyRequest {
+    const message = createBaseDeleteStrategyRequest();
+    message.token = object.token ?? "";
+    message.id = object.id ?? 0;
+    return message;
+  },
+};
+
 export interface PerpxService {
   loginWithTelegram(request: DeepPartial<TelegramLoginRequest>, metadata?: grpc.Metadata): Promise<LoginResponse>;
   getProfile(request: DeepPartial<ProfileRequest>, metadata?: grpc.Metadata): Promise<ProfileResponse>;
+  updateAvatar(request: DeepPartial<UpdateAvatarRequest>, metadata?: grpc.Metadata): Promise<DefaultResponse>;
+  updateEmail(request: DeepPartial<UpdateEmailRequest>, metadata?: grpc.Metadata): Promise<DefaultResponse>;
+  getInvoices(request: DeepPartial<GetInvoicesRequest>, metadata?: grpc.Metadata): Promise<GetInvoicesResponse>;
+  getStrategies(request: DeepPartial<GetStrategiesRequest>, metadata?: grpc.Metadata): Promise<GetStrategiesResponse>;
+  updateStrategy(request: DeepPartial<UpdateStrategyRequest>, metadata?: grpc.Metadata): Promise<DefaultResponse>;
+  addStrategy(request: DeepPartial<AddStrategyRequest>, metadata?: grpc.Metadata): Promise<DefaultResponse>;
+  deleteStrategy(request: DeepPartial<DeleteStrategyRequest>, metadata?: grpc.Metadata): Promise<DefaultResponse>;
 }
 
 export class PerpxServiceClientImpl implements PerpxService {
@@ -405,6 +1675,13 @@ export class PerpxServiceClientImpl implements PerpxService {
     this.rpc = rpc;
     this.loginWithTelegram = this.loginWithTelegram.bind(this);
     this.getProfile = this.getProfile.bind(this);
+    this.updateAvatar = this.updateAvatar.bind(this);
+    this.updateEmail = this.updateEmail.bind(this);
+    this.getInvoices = this.getInvoices.bind(this);
+    this.getStrategies = this.getStrategies.bind(this);
+    this.updateStrategy = this.updateStrategy.bind(this);
+    this.addStrategy = this.addStrategy.bind(this);
+    this.deleteStrategy = this.deleteStrategy.bind(this);
   }
 
   loginWithTelegram(request: DeepPartial<TelegramLoginRequest>, metadata?: grpc.Metadata): Promise<LoginResponse> {
@@ -413,6 +1690,34 @@ export class PerpxServiceClientImpl implements PerpxService {
 
   getProfile(request: DeepPartial<ProfileRequest>, metadata?: grpc.Metadata): Promise<ProfileResponse> {
     return this.rpc.unary(PerpxServicegetProfileDesc, ProfileRequest.fromPartial(request), metadata);
+  }
+
+  updateAvatar(request: DeepPartial<UpdateAvatarRequest>, metadata?: grpc.Metadata): Promise<DefaultResponse> {
+    return this.rpc.unary(PerpxServiceupdateAvatarDesc, UpdateAvatarRequest.fromPartial(request), metadata);
+  }
+
+  updateEmail(request: DeepPartial<UpdateEmailRequest>, metadata?: grpc.Metadata): Promise<DefaultResponse> {
+    return this.rpc.unary(PerpxServiceupdateEmailDesc, UpdateEmailRequest.fromPartial(request), metadata);
+  }
+
+  getInvoices(request: DeepPartial<GetInvoicesRequest>, metadata?: grpc.Metadata): Promise<GetInvoicesResponse> {
+    return this.rpc.unary(PerpxServicegetInvoicesDesc, GetInvoicesRequest.fromPartial(request), metadata);
+  }
+
+  getStrategies(request: DeepPartial<GetStrategiesRequest>, metadata?: grpc.Metadata): Promise<GetStrategiesResponse> {
+    return this.rpc.unary(PerpxServicegetStrategiesDesc, GetStrategiesRequest.fromPartial(request), metadata);
+  }
+
+  updateStrategy(request: DeepPartial<UpdateStrategyRequest>, metadata?: grpc.Metadata): Promise<DefaultResponse> {
+    return this.rpc.unary(PerpxServiceupdateStrategyDesc, UpdateStrategyRequest.fromPartial(request), metadata);
+  }
+
+  addStrategy(request: DeepPartial<AddStrategyRequest>, metadata?: grpc.Metadata): Promise<DefaultResponse> {
+    return this.rpc.unary(PerpxServiceaddStrategyDesc, AddStrategyRequest.fromPartial(request), metadata);
+  }
+
+  deleteStrategy(request: DeepPartial<DeleteStrategyRequest>, metadata?: grpc.Metadata): Promise<DefaultResponse> {
+    return this.rpc.unary(PerpxServicedeleteStrategyDesc, DeleteStrategyRequest.fromPartial(request), metadata);
   }
 }
 
@@ -454,6 +1759,167 @@ export const PerpxServicegetProfileDesc: UnaryMethodDefinitionish = {
   responseType: {
     deserializeBinary(data: Uint8Array) {
       const value = ProfileResponse.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const PerpxServiceupdateAvatarDesc: UnaryMethodDefinitionish = {
+  methodName: "updateAvatar",
+  service: PerpxServiceDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return UpdateAvatarRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = DefaultResponse.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const PerpxServiceupdateEmailDesc: UnaryMethodDefinitionish = {
+  methodName: "updateEmail",
+  service: PerpxServiceDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return UpdateEmailRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = DefaultResponse.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const PerpxServicegetInvoicesDesc: UnaryMethodDefinitionish = {
+  methodName: "getInvoices",
+  service: PerpxServiceDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return GetInvoicesRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = GetInvoicesResponse.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const PerpxServicegetStrategiesDesc: UnaryMethodDefinitionish = {
+  methodName: "getStrategies",
+  service: PerpxServiceDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return GetStrategiesRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = GetStrategiesResponse.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const PerpxServiceupdateStrategyDesc: UnaryMethodDefinitionish = {
+  methodName: "updateStrategy",
+  service: PerpxServiceDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return UpdateStrategyRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = DefaultResponse.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const PerpxServiceaddStrategyDesc: UnaryMethodDefinitionish = {
+  methodName: "addStrategy",
+  service: PerpxServiceDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return AddStrategyRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = DefaultResponse.decode(data);
+      return {
+        ...value,
+        toObject() {
+          return value;
+        },
+      };
+    },
+  } as any,
+};
+
+export const PerpxServicedeleteStrategyDesc: UnaryMethodDefinitionish = {
+  methodName: "deleteStrategy",
+  service: PerpxServiceDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return DeleteStrategyRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      const value = DefaultResponse.decode(data);
       return {
         ...value,
         toObject() {

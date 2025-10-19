@@ -56,18 +56,17 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
                 onChange={(e) => setFormData({ ...formData, period: e.target.value })}
                 className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500 appearance-none"
               >
-                <option value="1m">1分钟</option>
                 <option value="5m">5分钟</option>
                 <option value="15m">15分钟</option>
-                <option value="30m">30分钟</option>
                 <option value="1h">1小时</option>
+                <option value="4h">4小时</option>
               </select>
             </div>
             <div>
               <label className="block text-white/70 text-sm mb-2">成交量</label>
               <input
                 type="number"
-                value={formData.volume || ''}
+                value={formData.volume || '0'}
                 onChange={(e) => setFormData({ ...formData, volume: Number(e.target.value) })}
                 className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500"
               />
