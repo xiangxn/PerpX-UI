@@ -1,4 +1,4 @@
-import { mockTelegramEnv, emitEvent } from '@telegram-apps/bridge';
+import { mockTelegramEnv, emitEvent } from '@tma.js/bridge';
 
 if (process.env.NODE_ENV === 'development') {
     console.log('development: true')
@@ -43,11 +43,15 @@ if (process.env.NODE_ENV === 'development') {
             tgWebAppVersion: '8',
             tgWebAppPlatform: 'tdesktop',
         },
-        onEvent(e) {
-            if (e[0] === 'web_app_request_theme') {
+        onEvent(event) {
+            // event here is an object { event: string; params?: any }, but 
+            // typed depending on the "event" prop.
+            // @ts-ignore
+            if (event.name === 'web_app_request_theme') {
                 return emitEvent('theme_changed', { theme_params: themeParams });
             }
-            if (e[0] === 'web_app_request_viewport') {
+            // @ts-ignore
+            if (event.name === 'web_app_request_viewport') {
                 return emitEvent('viewport_changed', {
                     height: window.innerHeight,
                     width: window.innerWidth,
@@ -55,10 +59,12 @@ if (process.env.NODE_ENV === 'development') {
                     is_state_stable: true,
                 });
             }
-            if (e[0] === 'web_app_request_content_safe_area') {
+            // @ts-ignore
+            if (event.name === 'web_app_request_content_safe_area') {
                 return emitEvent('content_safe_area_changed', noInsets);
             }
-            if (e[0] === 'web_app_request_safe_area') {
+            // @ts-ignore
+            if (event.name === 'web_app_request_safe_area') {
                 return emitEvent('safe_area_changed', noInsets);
             }
         },

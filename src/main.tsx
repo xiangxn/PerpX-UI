@@ -8,7 +8,7 @@ import vConsole from 'vconsole';
 
 new vConsole()
 
-import { init } from '@telegram-apps/sdk-react';
+import { init } from '@tma.js/sdk-react';
 import "@/mockEnv"
 
 init()
