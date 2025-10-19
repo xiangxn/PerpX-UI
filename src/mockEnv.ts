@@ -33,9 +33,9 @@ if (process.env.NODE_ENV === 'development') {
                     id: 1,
                     first_name: 'necklace',
                     username: 'necklace',
-                    avatar: 'https://t.me/i/userpic/320/99281932.jpg'
+                    photo_url: 'https://t.me/i/userpic/320/99281932.jpg'
                 })],
-                ['hash', '7c48ab11e8f134b99948423f3e05a2ffe11fc0c9179408817a25d4fadd27f045'],
+                ['hash', '51e85084a619730c99885f8d6c1288e02a7cdcebe53fab4de9a0dfad3e28c3a1'],
                 ['signature', ''],
                 ['auth_date', "1760716184320"],
             ]),

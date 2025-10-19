@@ -9,7 +9,15 @@ interface AuthContextType {
 }
 
 const TOKEN_KEY = "perpx_token";
-const rpc = new GrpcWebImpl('https://perpx-api.bitsflea.com', { transport: grpc.CrossBrowserHttpTransport({ withCredentials: false }) })
+let rpcURL: string
+
+if (process.env.NODE_ENV === 'development') {
+    rpcURL = 'http://localhost:8080'
+} else {
+    rpcURL = 'https://perpx-api.bitsflea.com'
+}
+
+const rpc = new GrpcWebImpl(rpcURL, { transport: grpc.CrossBrowserHttpTransport({ withCredentials: false }) })
 const client = new PerpxServiceClientImpl(rpc);
 
 const AuthContext = createContext<AuthContextType | null>(null);
