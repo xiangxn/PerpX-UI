@@ -1,6 +1,6 @@
 import { UserProfile } from "@/types/strategy";
 import { createContext, useContext, useEffect, useState } from "react";
-import { useRawInitData, isTMA } from '@tma.js/sdk-react';
+import { useRawInitData, isTMA, retrieveRawInitData } from '@tma.js/sdk-react';
 import { PerpxServiceClientImpl, ProfileRequest, TelegramLoginRequest, GrpcWebImpl } from "@/grpc/perpx";
 import { grpc } from "@improbable-eng/grpc-web";
 
@@ -33,6 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const rawInitData = useRawInitData()
 
     console.log("rawInitData:", rawInitData)
+    console.log("retrieveRawInitData", retrieveRawInitData())
 
     useEffect(() => {
         console.log('isTMA=', isTMA());
