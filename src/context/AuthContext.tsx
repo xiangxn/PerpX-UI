@@ -1,6 +1,6 @@
 import { UserProfile } from "@/types/strategy";
 import { createContext, useContext, useEffect, useState } from "react";
-import { useRawInitData, isTMA, retrieveRawInitData } from '@tma.js/sdk-react';
+import { useRawInitData, isTMA } from '@tma.js/sdk-react';
 import { PerpxServiceClientImpl, ProfileRequest, TelegramLoginRequest, GrpcWebImpl } from "@/grpc/perpx";
 import { grpc } from "@improbable-eng/grpc-web";
 
@@ -32,14 +32,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<UserProfile | null>(null);
     const rawInitData = useRawInitData()
 
-    console.log("rawInitData:", rawInitData)
-    console.log("retrieveRawInitData", retrieveRawInitData())
+    console.debug("rawInitData:", rawInitData)
 
     useEffect(() => {
-        console.log('isTMA=', isTMA());
+        console.debug('isTMA:', isTMA());
         const userInfo = async () => {
             const token = getToken()
-            console.log("token:", token)
+            console.debug("token:", token)
             if (token) {
                 const userInfo = await getUserInfo(token)
                 console.log("userInfo:", userInfo)
@@ -50,17 +49,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 }
             } else if (isTMA()) {
                 const req = TelegramLoginRequest.create({ initData: rawInitData })
-                console.log("req:", req)
+                console.debug("req:", req)
                 const res = await client.loginWithTelegram(req)
-                console.log("res:", res)
+                console.debug("res:", res)
                 if (res) {
                     localStorage.setItem(TOKEN_KEY, res.token)
                 }
                 const userInfo = await getUserInfo(res.token)
-                console.log("userInfo:", userInfo)
+                console.debug("userInfo:", userInfo)
                 if (userInfo) {
                     const ui = userInfo as UserProfile
-                    // ui.avatar = initData?.user?.photo_url
                     setUser(ui)
                 }
             }

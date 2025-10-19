@@ -82,8 +82,8 @@ function ShowInfo({ userInfo }: { userInfo: UserProfile }) {
           <div className="bg-white/5 rounded-xl p-4 flex items-center gap-3">
             <User size={20} className="text-white/60" />
             <div className="flex-1">
-              <p className="text-white/50 text-sm">Telegram ID</p>
-              <p className="text-white font-medium">{profile.telegramId}</p>
+              <p className="text-white/50 text-sm">Telegram Name</p>
+              <p className="text-white font-medium">{profile.telegramName}</p>
             </div>
           </div>
 
