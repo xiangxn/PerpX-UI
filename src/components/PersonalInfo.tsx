@@ -81,7 +81,8 @@ function ShowInfo({ userInfo }: { userInfo: ProfileResponse }) {
     setIsEditingBind(false)
   };
   const handleBindUser = () => {
-    postEvent("web_app_open_tg_link", { path_full: `${config.BOT_NAME}?start=bind_user` })
+    // postEvent("web_app_open_tg_link", { path_full: `${config.BOT_NAME}?start=bind_user` })
+    openTelegramLink(`t.me/${config.BOT_NAME}?start=bind_user`)
     setIsEditingBind(false)
   };
 
