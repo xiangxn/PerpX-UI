@@ -77,12 +77,12 @@ function ShowInfo({ userInfo }: { userInfo: ProfileResponse }) {
 
   const handleBindGroup = () => {
     // postEvent("web_app_switch_inline_query", { query: `bind_group`, chat_types: ['groups'] })
-    openTelegramLink(`t.me/${config.BOT_NAME}?startgroup=bind_group&admin=post_messages+edit_messages+delete_messages`)
+    openTelegramLink(`https://t.me/${config.BOT_NAME}?startgroup=bind_group&admin=post_messages+edit_messages+delete_messages`)
     setIsEditingBind(false)
   };
   const handleBindUser = () => {
     // postEvent("web_app_open_tg_link", { path_full: `${config.BOT_NAME}?start=bind_user` })
-    openTelegramLink(`t.me/${config.BOT_NAME}?start=bind_user`)
+    openTelegramLink(`https://t.me/${config.BOT_NAME}?start=bind_user`)
     setIsEditingBind(false)
   };
 
