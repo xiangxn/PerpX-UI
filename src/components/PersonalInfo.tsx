@@ -1,16 +1,22 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, User, Receipt, Edit2, Check, X } from 'lucide-react';
-import { UserProfile } from '../types/strategy';
+import { Mail, User, Receipt, Edit2, Check, X, Bell, Users } from 'lucide-react';
 import { useSwipeBack } from '@/hooks/useSwipeBack';
 import { animated } from '@react-spring/web';
 import { useAuth } from '@/context/AuthContext';
-import { Invoice } from '@/grpc/perpx';
+import { Invoice, ProfileResponse } from '@/grpc/perpx';
 import dayjs from 'dayjs';
 import { capitalizeFirstLetter, cutTxId } from '@/utils/helper';
+import { postEvent } from "@tma.js/sdk-react"
 
 interface PersonalInfoProps {
   onBack: () => void;
+}
+
+declare global {
+  interface Window {
+    Telegram?: any;
+  }
 }
 
 function showTxId(chain: string, txId: string) {
@@ -27,7 +33,7 @@ function showTxId(chain: string, txId: string) {
   }
 }
 
-function getDays(userInfo: UserProfile) {
+function getDays(userInfo: ProfileResponse) {
   if (userInfo.subscriptionEnd) {
     const start = new Date()
     const end = new Date(userInfo.subscriptionEnd)
@@ -37,14 +43,23 @@ function getDays(userInfo: UserProfile) {
   return 0
 }
 
-function ShowInfo({ userInfo }: { userInfo: UserProfile }) {
+function ShowInfo({ userInfo }: { userInfo: ProfileResponse }) {
   const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [isEditingBind, setIsEditingBind] = useState(false);
   const [newEmail, setNewEmail] = useState(userInfo.email);
   const [profile, setProfile] = useState(userInfo);
   const { rpc, getToken } = useAuth()
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const [payments, setPayments] = useState<Invoice[]>([]);
+
+  let bindInfo: string[] = []
+  if (userInfo.telegramChatId) {
+    bindInfo.push(userInfo.telegramChatId)
+  }
+  if (userInfo.telegramThreadId) {
+    bindInfo.push(userInfo.telegramThreadId)
+  }
 
   const handleSaveEmail = async () => {
     const res = await rpc.updateEmail({ token: getToken()!, email: newEmail })
@@ -59,6 +74,14 @@ function ShowInfo({ userInfo }: { userInfo: UserProfile }) {
     setIsEditingEmail(false);
   };
 
+  const handleBindGroup = () => {
+    setIsEditingBind(false)
+  };
+  const handleBindUser = () => {
+    postEvent("web_app_open_link", { url: `https://t.me/bn_ticker_bot?start=bind_user` })
+    setIsEditingBind(false)
+  };
+
   useEffect(() => {
     const getPayments = async () => {
       const res = await rpc.getInvoices({ token: getToken()!, page, pageSize })
@@ -67,6 +90,18 @@ function ShowInfo({ userInfo }: { userInfo: UserProfile }) {
     }
     getPayments()
   }, [userInfo, page])
+
+  useEffect(() => {
+    console.log('window.Telegram:', window.Telegram.WebView)
+    if (window.Telegram?.WebApp) {
+      const app = window.Telegram.WebApp;
+      app.ready(); // 通知 Telegram WebApp 已加载完成
+
+      // 拿到用户数据
+      const user = app.initDataUnsafe?.user;
+      console.log(user)
+    }
+  }, []);
 
   return (
     <div className="flex-1 overflow-y-auto space-y-6 pb-20 scrollbar-hidden">
@@ -145,6 +180,50 @@ function ShowInfo({ userInfo }: { userInfo: UserProfile }) {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setIsEditingEmail(true)}
+                    className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+                  >
+                    <Edit2 size={18} className="text-white" />
+                  </motion.button>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="bg-white/5 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-3">
+                <Bell size={20} className="text-white/60" />
+                <div>
+                  <p className="text-white/50 text-sm">Bot绑定信息</p>
+                  <p className="text-white font-medium">{bindInfo.join(',')}</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                {isEditingBind ? (
+                  <>
+                    <motion.button
+                      title='绑定用户'
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={handleBindUser}
+                      className="p-2 bg-green-500/20 rounded-lg hover:bg-green-500/30 transition-colors"
+                    >
+                      <User size={18} className="text-green-400" />
+                    </motion.button>
+                    <motion.button
+                      title='绑定群组'
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={handleBindGroup}
+                      className="p-2 bg-green-500/20 rounded-lg hover:bg-green-500/30 transition-colors"
+                    >
+                      <Users size={18} className="text-green-400" />
+                    </motion.button>
+                  </>
+                ) : (
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setIsEditingBind(true)}
                     className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
                   >
                     <Edit2 size={18} className="text-white" />

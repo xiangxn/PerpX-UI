@@ -1,11 +1,10 @@
-import { UserProfile } from "@/types/strategy";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRawInitData, isTMA } from '@tma.js/sdk-react';
-import { PerpxServiceClientImpl, ProfileRequest, TelegramLoginRequest, GrpcWebImpl, PerpxService } from "@/grpc/perpx";
+import { PerpxServiceClientImpl, ProfileRequest, TelegramLoginRequest, GrpcWebImpl, PerpxService, ProfileResponse } from "@/grpc/perpx";
 import { grpc } from "@improbable-eng/grpc-web";
 
 interface AuthContextType {
-    user: UserProfile | null;
+    user: ProfileResponse | null;
     rpc: PerpxService;
     getToken: () => string | null;
 }
@@ -39,7 +38,7 @@ async function getUserInfo(token: string) {
 }
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<UserProfile | null>(null);
+    const [user, setUser] = useState<ProfileResponse | null>(null);
     const rawInitData = useRawInitData()
 
     console.debug("rawInitData:", rawInitData)
@@ -53,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const userInfo = await getUserInfo(token)
                 console.log("userInfo:", userInfo)
                 if (userInfo) {
-                    setUser(userInfo as UserProfile)
+                    setUser(userInfo)
                 } else {
                     localStorage.removeItem(TOKEN_KEY)
                 }
@@ -68,8 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const userInfo = await getUserInfo(res.token)
                 console.debug("userInfo:", userInfo)
                 if (userInfo) {
-                    const ui = userInfo as UserProfile
-                    setUser(ui)
+                    setUser(userInfo)
                 }
             }
         }
