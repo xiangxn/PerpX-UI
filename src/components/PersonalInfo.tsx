@@ -75,10 +75,11 @@ function ShowInfo({ userInfo }: { userInfo: ProfileResponse }) {
   };
 
   const handleBindGroup = () => {
+    postEvent("web_app_switch_inline_query", { query: `bn_ticker_bot?start=bind_group`, chat_types: ['groups'] })
     setIsEditingBind(false)
   };
   const handleBindUser = () => {
-    postEvent("web_app_open_tg_link", { path_full: `https://t.me/bn_ticker_bot?start=bind_user` })
+    postEvent("web_app_open_tg_link", { path_full: `bn_ticker_bot?start=bind_user` })
     setIsEditingBind(false)
   };
 
