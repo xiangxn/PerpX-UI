@@ -7,7 +7,8 @@ import { useAuth } from '@/context/AuthContext';
 import { Invoice, ProfileResponse } from '@/grpc/perpx';
 import dayjs from 'dayjs';
 import { capitalizeFirstLetter, cutTxId } from '@/utils/helper';
-import { postEvent } from "@tma.js/sdk-react"
+import { openTelegramLink, postEvent } from "@tma.js/sdk-react"
+import { config } from '@/config';
 
 interface PersonalInfoProps {
   onBack: () => void;
@@ -75,11 +76,12 @@ function ShowInfo({ userInfo }: { userInfo: ProfileResponse }) {
   };
 
   const handleBindGroup = () => {
-    postEvent("web_app_switch_inline_query", { query: `bn_ticker_bot?start=bind_group`, chat_types: ['groups'] })
+    // postEvent("web_app_switch_inline_query", { query: `bind_group`, chat_types: ['groups'] })
+    openTelegramLink(`t.me/${config.BOT_NAME}?startgroup=bind_group&admin=post_messages+edit_messages+delete_messages`)
     setIsEditingBind(false)
   };
   const handleBindUser = () => {
-    postEvent("web_app_open_tg_link", { path_full: `bn_ticker_bot?start=bind_user` })
+    postEvent("web_app_open_tg_link", { path_full: `${config.BOT_NAME}?start=bind_user` })
     setIsEditingBind(false)
   };
 
