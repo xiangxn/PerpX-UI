@@ -78,7 +78,7 @@ function ShowInfo({ userInfo }: { userInfo: ProfileResponse }) {
     setIsEditingBind(false)
   };
   const handleBindUser = () => {
-    postEvent("web_app_open_link", { url: `https://t.me/bn_ticker_bot?start=bind_user` })
+    postEvent("web_app_open_tg_link", { path_full: `https://t.me/bn_ticker_bot?start=bind_user` })
     setIsEditingBind(false)
   };
 
@@ -90,18 +90,6 @@ function ShowInfo({ userInfo }: { userInfo: ProfileResponse }) {
     }
     getPayments()
   }, [userInfo, page])
-
-  useEffect(() => {
-    console.log('window.Telegram:', window.Telegram.WebView)
-    if (window.Telegram?.WebApp) {
-      const app = window.Telegram.WebApp;
-      app.ready(); // 通知 Telegram WebApp 已加载完成
-
-      // 拿到用户数据
-      const user = app.initDataUnsafe?.user;
-      console.log(user)
-    }
-  }, []);
 
   return (
     <div className="flex-1 overflow-y-auto space-y-6 pb-20 scrollbar-hidden">
