@@ -279,7 +279,7 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
                             <span className="text-white ml-2">{formatNumberEN(strategy.volume)}</span>
                           </div>
                           <div className="bg-white/5 rounded-lg p-2">
-                            <span className="text-white/50">成交额:</span>
+                            <span className="text-white/50">24H成交额:</span>
                             <span className="text-white ml-2">{formatNumberEN(strategy.turnover)}</span>
                           </div>
                         </>
@@ -295,7 +295,7 @@ export default function StrategyManagement({ onBack }: StrategyManagementProps) 
                             <span className="text-white ml-2">{strategy.count}</span>
                           </div>
                           <div className="bg-white/5 rounded-lg p-2 col-span-2">
-                            <span className="text-white/50">成交额:</span>
+                            <span className="text-white/50">24H成交额:</span>
                             <span className="text-white ml-2">{formatNumberEN(strategy.turnover)}</span>
                           </div>
                         </>
