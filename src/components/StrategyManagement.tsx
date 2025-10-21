@@ -22,12 +22,15 @@ function getParams(strategy: Strategy) {
   switch (strategy.type) {
     case 'VolatilitySpike':
       const vs = strategy as VolatilitySpikeStrategy
-      return JSON.stringify({ volume: vs.volume, turnover: vs.turnover, amplitudeMultiple: vs.amplitudeMultiple })
+      vs.amplitudeMultiple = vs.amplitudeMultiple || 2.5
+      return JSON.stringify({ volume: vs.volume || 0, turnover: vs.turnover || 0, amplitudeMultiple: vs.amplitudeMultiple })
     case 'ConsecutiveMove':
       const cm = strategy as ConsecutiveMoveStrategy
-      return JSON.stringify({ count: cm.count, turnover: cm.turnover })
+      cm.count = cm.count || 3
+      return JSON.stringify({ count: cm.count, turnover: cm.turnover || 0 })
     case 'FundingRate':
       const fr = strategy as FundingRateStrategy
+      fr.fundingRate = fr.fundingRate || 0.0001
       return JSON.stringify({ fundingRate: fr.fundingRate })
     default:
       break;

@@ -67,7 +67,10 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
               <input
                 type="number"
                 value={formData.volume || '0'}
-                onChange={(e) => setFormData({ ...formData, volume: Number(e.target.value) })}
+                onChange={(e) => setFormData({ ...formData, volume: e.target.value })}
+                onBlur={() => {
+                  setFormData({ ...formData, volume: Number(formData.volume) });
+                }}
                 className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500"
               />
             </div>
@@ -85,6 +88,7 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
               <input
                 type="number"
                 step="0.1"
+                min={2}
                 value={formData.amplitudeMultiple || ''}
                 onChange={(e) => setFormData({ ...formData, amplitudeMultiple: Number(e.target.value) })}
                 className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500"
@@ -157,7 +161,10 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
                 type="number"
                 step="0.0001"
                 value={formData.fundingRate || ''}
-                onChange={(e) => setFormData({ ...formData, fundingRate: Number(e.target.value) })}
+                onChange={(e) => setFormData({ ...formData, fundingRate: e.target.value })}
+                onBlur={() => {
+                  setFormData({ ...formData, fundingRate: Number(formData.fundingRate) });
+                }}
                 className="w-full bg-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500"
               />
             </div>
@@ -197,9 +204,8 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
                   onClick={() => setSelectedType(type.id as StrategyType)}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className={`relative p-[2px] rounded-xl overflow-hidden ${
-                    selectedType === type.id ? `bg-gradient-to-r ${type.color}` : 'bg-white/10'
-                  }`}
+                  className={`relative p-[2px] rounded-xl overflow-hidden ${selectedType === type.id ? `bg-gradient-to-r ${type.color}` : 'bg-white/10'
+                    }`}
                 >
                   <div className="bg-slate-800 rounded-xl p-4 flex items-center gap-3">
                     <Icon size={24} className="text-white" />
@@ -217,9 +223,8 @@ export default function StrategyForm({ strategy, onSave, onCancel }: StrategyFor
           type="submit"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className={`w-full bg-gradient-to-r ${
-            strategyTypes.find(t => t.id === selectedType)?.color
-          } text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-shadow`}
+          className={`w-full bg-gradient-to-r ${strategyTypes.find(t => t.id === selectedType)?.color
+            } text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-shadow`}
         >
           保存策略
         </motion.button>

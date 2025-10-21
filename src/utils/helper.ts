@@ -25,6 +25,7 @@ export function formatNumberCN(num: number): string {
 }
 
 export function formatNumberEN(num: number): string {
+  if (!num) return "0"
   if (num >= 1e3 && num < 1e6) {
     return (num / 1e3).toFixed(2).replace(/\.00$/, '') + 'K';
   } else if (num >= 1e6 && num < 1e9) {
